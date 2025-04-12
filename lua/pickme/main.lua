@@ -3,16 +3,12 @@ local config = require('pickme.config')
 ---@class PickMe.Main
 local M = {}
 
--- Modify this to be a function that reads from config each time
-local function get_picker_provider()
-    return config.config.picker_provider
-end
-
 local fzf_lua_prompt_suffix = ' '
 
 ---@return function
 local function get_picker_command(command, opts)
-    local picker_provider = get_picker_provider() -- Get current provider
+    local picker_provider = config.config.picker_provider
+
     local picker_commands = {
         git_files = {
             snacks = function()
@@ -590,7 +586,6 @@ local function get_picker_command(command, opts)
     return picker_commands[command][picker_provider]
 end
 
--- Standard pick function without test_mode
 M.pick = function(command, opts)
     opts = opts or {}
     vim.schedule(function()
