@@ -1,6 +1,6 @@
 return {
     setup = function(opts)
-        require('template.config').setup(opts)
-        require('template.commands').setup()
+        require('pickme.config').setup(opts)
+        require('pickme.commands').setup()
     end,
 }

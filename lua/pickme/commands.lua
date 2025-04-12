@@ -1,12 +1,12 @@
-local template_module = require('template.module')
-local config = require('template.config').config
+local pickme = require('pickme.main')
+local config = require('pickme.config').config
 
 local M = {}
 
 M.setup = function()
     -- Add all user commands here
-    vim.api.nvim_create_user_command('TemplateHello', function(opts)
-        template_module.greet(opts.args)
+    vim.api.nvim_create_user_command('PickMe', function(opts)
+        pickme.pick(opts.args)
     end, { nargs = '?' })
 
     if config.add_default_keybindings then
@@ -15,7 +15,7 @@ M.setup = function()
         end
 
         -- Add all keybindings here
-        add_keymap('<leader>Th', ':TemplateHello Neovim (btw!)<CR>', 'Template says hi')
+        add_keymap('<leader>Th', ':PickMe files<CR>', 'Pick Files')
     end
 end
 
