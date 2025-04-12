@@ -590,20 +590,13 @@ local function get_picker_command(command, opts)
     return picker_commands[command][picker_provider]
 end
 
--- Modified pick function with test_mode parameter
-M.pick = function(command, opts, test_mode)
+-- Standard pick function without test_mode
+M.pick = function(command, opts)
     opts = opts or {}
-    if test_mode then
-        -- Run synchronously for tests
+    vim.schedule(function()
         local picker_cmd = get_picker_command(command, opts)
         picker_cmd()
-    else
-        -- Normal async operation
-        vim.schedule(function()
-            local picker_cmd = get_picker_command(command, opts)
-            picker_cmd()
-        end)
-    end
+    end)
 end
 
 return M

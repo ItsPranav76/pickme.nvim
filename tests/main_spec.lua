@@ -1,6 +1,7 @@
 local pickme = require('pickme')
 local main = require('pickme.main')
 local assert = require('luassert.assert')
+local spy = require('luassert.spy')
 local describe = require('plenary.busted').describe
 local it = require('plenary.busted').it
 local before_each = require('plenary.busted').before_each
@@ -113,6 +114,7 @@ mock.mini_pick = {
 
 describe('pickme.main', function()
     local orig_require = _G.require
+    local orig_schedule = vim.schedule
 
     -- Setup the mocks before each test
     before_each(function()
@@ -131,13 +133,19 @@ describe('pickme.main', function()
             end
         end
 
+        -- Mock vim.schedule to run the function immediately
+        vim.schedule = function(fn)
+            fn()
+        end
+
         -- Reset pickme default config
         pickme.setup({})
     end)
 
-    -- Restore original require after each test
+    -- Restore original functions after each test
     after_each(function()
         _G.require = orig_require
+        vim.schedule = orig_schedule
     end)
 
     describe('pick', function()
@@ -146,14 +154,14 @@ describe('pickme.main', function()
             pickme.setup({ picker_provider = 'snacks' })
 
             -- Spy on the mock
-            local spy = vim.spy.on(mock.snacks_picker, 'files')
+            local files_spy = spy.on(mock.snacks_picker, 'files')
 
-            -- Call the module function with test_mode = true for synchronous execution
-            main.pick('files', { title = 'Test Files' }, true)
+            -- Call the module function
+            main.pick('files', { title = 'Test Files' })
 
             -- Assert the spy was called with correct options
-            assert.spy(spy).was_called(1)
-            assert.spy(spy).was_called_with({ title = 'Test Files' })
+            assert.spy(files_spy).was_called(1)
+            assert.spy(files_spy).was_called_with({ title = 'Test Files' })
         end)
 
         it('calls the correct telescope function', function()
@@ -161,14 +169,14 @@ describe('pickme.main', function()
             pickme.setup({ picker_provider = 'telescope' })
 
             -- Spy on the mock
-            local spy = vim.spy.on(mock.telescope_builtin, 'find_files')
+            local files_spy = spy.on(mock.telescope_builtin, 'find_files')
 
-            -- Call the module function with test_mode = true for synchronous execution
-            main.pick('files', { title = 'Test Files' }, true)
+            -- Call the module function
+            main.pick('files', { title = 'Test Files' })
 
             -- Assert the spy was called with correct options
-            assert.spy(spy).was_called(1)
-            assert.spy(spy).was_called_with({ prompt_title = 'Test Files', title = 'Test Files' })
+            assert.spy(files_spy).was_called(1)
+            assert.spy(files_spy).was_called_with({ prompt_title = 'Test Files', title = 'Test Files' })
         end)
 
         it('calls the correct fzf_lua function', function()
@@ -176,14 +184,14 @@ describe('pickme.main', function()
             pickme.setup({ picker_provider = 'fzf_lua' })
 
             -- Spy on the mock
-            local spy = vim.spy.on(mock.fzf_lua, 'files')
+            local files_spy = spy.on(mock.fzf_lua, 'files')
 
-            -- Call the module function with test_mode = true for synchronous execution
-            main.pick('files', { title = 'Test Files' }, true)
+            -- Call the module function
+            main.pick('files', { title = 'Test Files' })
 
             -- Assert the spy was called with correct options
-            assert.spy(spy).was_called(1)
-            assert.spy(spy).was_called_with({ prompt = 'Test Files ', title = 'Test Files' })
+            assert.spy(files_spy).was_called(1)
+            assert.spy(files_spy).was_called_with({ prompt = 'Test Files ', title = 'Test Files' })
         end)
 
         it('calls the correct mini.pick function', function()
@@ -191,14 +199,14 @@ describe('pickme.main', function()
             pickme.setup({ picker_provider = 'mini' })
 
             -- Spy on the mock
-            local spy = vim.spy.on(mock.mini_pick.builtin, 'files')
+            local files_spy = spy.on(mock.mini_pick.builtin, 'files')
 
-            -- Call the module function with test_mode = true for synchronous execution
-            main.pick('files', { title = 'Test Files' }, true)
+            -- Call the module function
+            main.pick('files', { title = 'Test Files' })
 
             -- Assert the spy was called with correct options
-            assert.spy(spy).was_called(1)
-            assert.spy(spy).was_called_with({ title = 'Test Files' })
+            assert.spy(files_spy).was_called(1)
+            assert.spy(files_spy).was_called_with({ title = 'Test Files' })
         end)
 
         it('handles live_grep correctly across providers', function()
@@ -215,16 +223,16 @@ describe('pickme.main', function()
                 pickme.setup({ picker_provider = provider.name })
 
                 -- Spy on the mock
-                local spy = vim.spy.on(provider.main, provider.func)
+                local func_spy = spy.on(provider.main, provider.func)
 
-                -- Call the module function with test_mode = true for synchronous execution
-                main.pick('live_grep', { title = 'Search Text' }, true)
+                -- Call the module function
+                main.pick('live_grep', { title = 'Search Text' })
 
                 -- Assert the spy was called
-                assert.spy(spy).was_called(1)
+                assert.spy(func_spy).was_called(1)
 
                 -- Clean up the spy
-                spy:clear()
+                func_spy:clear()
             end
         end)
 
@@ -242,16 +250,16 @@ describe('pickme.main', function()
                 pickme.setup({ picker_provider = provider.name })
 
                 -- Spy on the mock
-                local spy = vim.spy.on(provider.main, provider.func)
+                local branches_spy = spy.on(provider.main, provider.func)
 
-                -- Call the module function with test_mode = true for synchronous execution
-                main.pick('git_branches', { title = 'Git Branches' }, true)
+                -- Call the module function
+                main.pick('git_branches', { title = 'Git Branches' })
 
                 -- Assert the spy was called
-                assert.spy(spy).was_called(1)
+                assert.spy(branches_spy).was_called(1)
 
                 -- Clean up the spy
-                spy:clear()
+                branches_spy:clear()
             end
         end)
 
@@ -269,16 +277,16 @@ describe('pickme.main', function()
                 pickme.setup({ picker_provider = provider.name })
 
                 -- Spy on the mock
-                local spy = vim.spy.on(provider.main, provider.func)
+                local diag_spy = spy.on(provider.main, provider.func)
 
-                -- Call the module function with test_mode = true for synchronous execution
-                main.pick('diagnostics', { title = 'Diagnostics' }, true)
+                -- Call the module function
+                main.pick('diagnostics', { title = 'Diagnostics' })
 
                 -- Assert the spy was called
-                assert.spy(spy).was_called(1)
+                assert.spy(diag_spy).was_called(1)
 
                 -- Clean up the spy
-                spy:clear()
+                diag_spy:clear()
             end
         end)
     end)
