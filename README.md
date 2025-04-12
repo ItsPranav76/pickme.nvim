@@ -30,7 +30,151 @@
 
 </div>
 
-pickme.nvim is a neovim plugin that allows neovim users to `<action>`.
+# pickme.nvim
+
+A unified interface for multiple Neovim picker plugins.
+
+## Overview
+
+`pickme.nvim` provides a consistent API to work with different picker plugins in Neovim. It currently supports:
+
+- [Snacks.picker](https://github.com/folke/snacks.nvim/blob/main/docs/picker.md)
+- [Telescope](https://github.com/nvim-telescope/telescope.nvim)
+- [fzf-lua](https://github.com/ibhagwan/fzf-lua)
+- [mini.pick](https://github.com/echasnovski/mini.pick)
+
+## Installation
+
+Using [packer.nvim](https://github.com/wbthomason/packer.nvim):
+
+```lua
+use {
+  '2KAbhishek/pickme.nvim',
+  requires = {
+    -- Include at least one of these pickers:
+    -- {'folke/snacks.nvim'}, -- For snacks.picker
+    -- {'nvim-telescope/telescope.nvim'}, -- For telescope
+    -- {'ibhagwan/fzf-lua'}, -- For fzf-lua
+    -- {'echasnovski/mini.pick'}, -- For mini.pick
+  }
+}
+```
+
+Using [lazy.nvim](https://github.com/folke/lazy.nvim):
+
+```lua
+{
+  '2KAbhishek/pickme.nvim',
+  dependencies = {
+    -- Include at least one of these pickers:
+    -- 'folke/snacks.nvim', -- For snacks.picker
+    -- 'nvim-telescope/telescope.nvim', -- For telescope
+    -- 'ibhagwan/fzf-lua', -- For fzf-lua
+    -- 'echasnovski/mini.pick', -- For mini.pick
+  }
+}
+```
+
+## Configuration
+
+```lua
+require('pickme').setup({
+  -- Choose your preferred picker provider
+  picker_provider = 'telescope', -- Options: 'snacks', 'telescope', 'fzf_lua', 'mini'
+})
+```
+
+## Available Pickers
+
+All these pickers are available through a unified interface regardless of the underlying provider:
+
+### Files and Navigation
+- `files` - Find files in the current directory
+- `git_files` - Find files tracked by Git
+- `buffers` - Browse and select open buffers
+- `oldfiles` - Browse recently opened files
+- `live_grep` - Search for a string in your project (grep)
+
+### Git Integration
+- `git_branches` - View and checkout git branches
+- `git_status` - View files with git status changes
+- `git_commits` - Browse git commit history
+
+### LSP Features
+- `lsp_references` - Find references to the symbol under cursor
+- `lsp_document_symbols` - List symbols in current document
+- `lsp_workspace_symbols` - Search through workspace symbols
+- `diagnostics` - View and navigate diagnostic messages
+
+### Neovim Functionality
+- `commands` - Browse available commands
+- `help` - Search through help tags
+- `marks` - View and jump to marks
+- `registers` - View contents of registers
+- `keymaps` - Browse configured key mappings
+- `highlights` - Browse highlight groups
+- `colorschemes` - Preview and apply colorschemes
+
+### History and Resume
+- `command_history` - View command history
+- `search_history` - View search history
+- `spell_suggest` - Get spelling suggestions for word under cursor
+- `resume` - Resume the last picker
+
+### Custom Pickers
+- `select_file` - Custom file picker with provided items
+- `custom` - Fully customizable picker with custom items and handlers
+
+## Usage
+
+```lua
+local pickme = require('pickme')
+
+-- Basic usage
+pickme.pick('files', { title = 'Find Files' })
+pickme.pick('live_grep', { title = 'Search Text' })
+
+-- With additional options
+pickme.pick('git_branches', {
+  title = 'Git Branches',
+  -- Additional options are passed to the underlying picker
+})
+
+-- Using custom picker
+pickme.pick('custom', {
+  title = 'My Custom Picker',
+  items = {'item1', 'item2', 'item3'},
+  entry_maker = function(item)
+    return { display = item, value = item }
+  end,
+  preview_generator = function(item)
+    return "Preview content for " .. item
+  end,
+  preview_ft = 'markdown',
+  selection_handler = function(_, selection)
+    print("Selected: " .. selection.value)
+  end
+})
+```
+
+## Key Mappings
+
+Example key mappings:
+
+```lua
+local pickme = require('pickme')
+
+vim.keymap.set('n', '<leader>ff', function() pickme.pick('files', { title = 'Find Files' }) end, { desc = 'Find Files' })
+vim.keymap.set('n', '<leader>fg', function() pickme.pick('live_grep', { title = 'Search Text' }) end, { desc = 'Live Grep' })
+vim.keymap.set('n', '<leader>fb', function() pickme.pick('buffers', { title = 'Buffers' }) end, { desc = 'Buffers' })
+vim.keymap.set('n', '<leader>fh', function() pickme.pick('help', { title = 'Help Tags' }) end, { desc = 'Help Tags' })
+vim.keymap.set('n', '<leader>fc', function() pickme.pick('commands', { title = 'Commands' }) end, { desc = 'Commands' })
+vim.keymap.set('n', '<leader>fd', function() pickme.pick('diagnostics', { title = 'Diagnostics' }) end, { desc = 'Diagnostics' })
+```
+
+## License
+
+Open source under the MIT License.
 
 ## ✨ Features
 
