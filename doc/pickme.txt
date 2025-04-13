@@ -62,71 +62,107 @@ CONFIGURATION ~
     require('pickme').setup({
       -- Choose your preferred picker provider
       picker_provider = 'snacks', -- Options: 'snacks' (default), 'telescope', 'fzf_lua'
+    
+      -- Auto-detect available picker providers (default: true)
+      -- If the specified picker_provider is not available, will try to use one from provider_priority list
+      detect_provider = true,
+    
+      -- Add default keybindings (default: true)
+      -- See Keybindings section below for the full list of default keybindings
+      add_default_keybindings = true,
+    
+      -- Command aliases for convenient shortcuts
+      -- Example: using ':PickMe grep' will call ':PickMe live_grep'
+      command_aliases = {
+        grep = 'live_grep',
+        -- Add your own aliases here
+      }
     })
 <
 
 
 AVAILABLE PICKERS                       *pickme-pickme.nvim-available-pickers*
 
-All these pickers are available through a unified interface regardless of the
-underlying provider:
 
+COMMON PICKERS ~
 
-FILES AND NAVIGATION ~
+These pickers are available across all three supported providers (snacks,
+telescope, fzf_lua):
 
-- `files` - Find files in the current directory
-- `git_files` - Find files tracked by Git
+- `autocmds` - List autocommands
+- `buffer_grep` - Search within current buffer
 - `buffers` - Browse and select open buffers
-- `oldfiles` - Browse recently opened files
-- `live_grep` - Search for a string in your project (grep)
-- `grep_string` - Search for the word under cursor
-- `buffer_grep` - Search within the current buffer
-- `tags` - Browse ctags
-
-
-GIT INTEGRATION ~
-
-- `git_branches` - View and checkout git branches
-- `git_status` - View files with git status changes
-- `git_commits` - Browse git commit history
-- `git_stash` - Browse git stash entries
-
-
-LSP FEATURES ~
-
-- `lsp_references` - Find references to the symbol under cursor
-- `lsp_document_symbols` - List symbols in current document
-- `lsp_workspace_symbols` - Search through workspace symbols
-- `lsp_definitions` - Go to definition of the symbol under cursor
-- `lsp_implementations` - Find implementations of the interface under cursor
-- `lsp_type_definitions` - Find type definitions
-- `diagnostics` - View and navigate diagnostic messages
-
-
-NEOVIM FUNCTIONALITY ~
-
+- `colorschemes` - Browse and apply colorschemes
+- `command_history` - View command history
 - `commands` - Browse available commands
+- `diagnostics` - View workspace diagnostics
+- `files` - Find files in the current directory
+- `git_branches` - View and checkout git branches
+- `git_commits` - Browse git commit history
+- `git_files` - Find files tracked by Git
+- `git_log_file` - View git commits for the current buffer
+- `git_log_line` - View git history for current line
+- `git_stash` - Browse git stash entries
+- `git_status` - View files with git status changes
+- `grep_string` - Search for the word under cursor
 - `help` - Search through help tags
-- `marks` - View and jump to marks
-- `registers` - View contents of registers
-- `keymaps` - Browse configured key mappings
 - `highlights` - Browse highlight groups
-- `colorschemes` - Preview and apply colorschemes
-- `man` - Browse man pages
 - `jumplist` - Navigate through jump history
-- `quickfix` - Browse quickfix list items
+- `keymaps` - Browse configured key mappings
+- `live_grep` - Search for a string in your project (grep)
+- `loclist` - Browse location list
+- `lsp_declarations` - Find declarations with LSP
+- `lsp_definitions` - Go to definition of the symbol under cursor
+- `lsp_document_symbols` - List symbols in current document
+- `lsp_implementations` - Find implementations of the interface under cursor
+- `lsp_references` - Find references to the symbol under cursor
+- `lsp_type_definitions` - Find type definitions
+- `lsp_workspace_symbols` - Search for workspace symbols
+- `man` - Browse manual pages
+- `marks` - View and jump to marks
+- `oldfiles` - Browse recently opened files
+- `options` - Browse Neovim options
+- `pickers` - Browse available pickers
+- `quickfix` - Browse quickfix list
+- `registers` - View contents of registers
+- `resume` - Resume the last picker
+- `search_history` - View search history
+- `spell_suggest` - Get spelling suggestions for word under cursor
 - `treesitter` - Navigate treesitter symbols
 
 
-HISTORY AND RESUME ~
+SNACKS PICKERS ~
 
-- `command_history` - View command history
-- `search_history` - View search history
-- `spell_suggest` - Get spelling suggestions for word under cursor
-- `resume` - Resume the last picker
+- `cliphist` - Browse clipboard history
+- `git_log` - View detailed git log
+- `grep_buffers` - Search across all open buffers
+- `icons` - Browse and insert icons
+- `lazy` - Search through lazy.nvim plugin specs
+- `lsp_config` - Browse LSP server configurations
+- `projects` - Browse and switch between projects
+
+
+TELESCOPE PICKERS ~
+
+- `options` - View Neovim options
+- `icons` - Browse symbols (with devicons)
+- `tags` - Work with ctags
+
+
+FZF-LUA PICKERS ~
+
+- `breakpoints` - View DAP debugger breakpoints
+- `git_tags` - Browse git tags
+- `options` - View Neovim options
+- `profiles` - Switch FZF profiles
+- `tabs` - Browse and switch between tabs
+- `tags` - Work with ctags
+- `tmux_cliphist` - Browse tmux clipboard history
 
 
 CUSTOM PICKERS ~
+
+These are utility functions you can use to create your own pickers:
 
 - `select_file` - Custom file picker with provided items
 - `custom_picker` - Fully customizable picker with custom items and handlers
@@ -140,6 +176,12 @@ LUA USAGE ~
     -- Basic usage
     pickme.pick('files', { title = 'Find Files' })
     pickme.pick('live_grep', { title = 'Search Text' })
+    
+    -- Select file from a list of files
+    pickme.select_file({
+      items = { "path/to/file1.txt", "path/to/file2.lua", "path/to/file3.md" },
+      title = "Select a file to open"
+    })
     
     -- Using custom picker
     pickme.custom_picker({
@@ -158,20 +200,86 @@ LUA USAGE ~
     })
 <
 
+You can find more example custom picker usage in octohub.nvim/repos.lua
+<https://github.com/2kabhishek/octohub.nvim/blob/main/lua/octohub/repos.lua>
+
 
 KEYBINDINGS ~
 
-Example key mappings:
+If `add_default_keybindings = true` in your setup, the following keybindings
+will be automatically configured:
+
+  Keybinding        Command                 Description
+  ----------------- ----------------------- ------------------------
+  <leader>,         buffers                 Buffers
+  <leader>/         search_history          Search History
+  <leader>:         command_history         Command History
+  <leader><space>   files                   Files
+  <C-f>             files                   Files
+  <leader>fa        files                   Find Files
+  <leader>fb        buffers                 Buffers
+  <leader>fc        git_log_file            File Commits
+  <leader>fd        projects                Project Dirs
+  <leader>ff        git_files               Find Git Files
+  <leader>fg        live_grep               Grep
+  <leader>fl        loclist                 Location List
+  <leader>fm        git_status              Modified Files
+  <leader>fo        grep_buffers            Grep Open Buffers
+  <leader>fp        resume                  Previous Picker
+  <leader>fq        quickfix                Quickfix List
+  <leader>fr        oldfiles                Recent Files
+  <leader>fs        buffer_grep             Buffer Lines
+  <leader>ft        pickers                 All Pickers
+  <leader>fu        undo                    Undo History
+  <leader>fw        grep_string             Word Grep
+  <leader>fz        zoxide                  Zoxide
+  <leader>gL        git_log                 Git Log
+  <leader>gS        git_stash               Git Stash
+  <leader>gc        git_commits             Git Commits
+  <leader>gl        git_log_line            Git Log Line
+  <leader>gs        git_branches            Git Branches
+  <leader>ii        icons                   Icons
+  <leader>ir        registers               Registers
+  <leader>is        spell_suggest           Spell Suggestions
+  <leader>iv        cliphist                Clipboard
+  <leader>lD        lsp_declarations        LSP Declarations
+  <leader>lF        lsp_references          References
+  <leader>lL        diagnostics             Diagnostics
+  <leader>lS        lsp_workspace_symbols   Workspace Symbols
+  <leader>ld        lsp_definitions         LSP Definitions
+  <leader>li        lsp_implementations     LSP Implementations
+  <leader>ll        diagnostics_buffer      Buffer Diagnostics
+  <leader>ls        lsp_document_symbols    Document Symbols
+  <leader>lt        lsp_type_definitions    Type Definitions
+  <leader>oC        colorschemes            Colorschemes
+  <leader>oa        autocmds                Autocmds
+  <leader>oc        command_history         Command History
+  <leader>od        help                    Docs
+  <leader>of        marks                   Marks
+  <leader>og        commands                Commands
+  <leader>oh        highlights              Highlights
+  <leader>oj        jumplist                Jump List
+  <leader>ok        keymaps                 Keymaps
+  <leader>ol        lazy                    Search for Plugin Spec
+  <leader>om        man                     Man Pages
+  <leader>on        notifications           Notifications
+  <leader>oo        options                 Options
+  <leader>os        search_history          Search History
+  <leader>ot        treesitter              Treesitter Find
+  <leader>ecc       Custom                  Neovim Configs
+  <leader>ecP       Custom                  Plugin Files
+If you want to disable the default keybindings, set `add_default_keybindings =
+false` in your setup.
+
+You can add your own keybindings by using the `pickme.pick` function or the
+`PickMe` command. For example:
 
 >lua
     local pickme = require('pickme')
     
-    vim.keymap.set('n', '<leader>ff', function() pickme.pick('files', { title = 'Find Files' }) end, { desc = 'Find Files' })
-    vim.keymap.set('n', '<leader>fg', function() pickme.pick('live_grep', { title = 'Search Text' }) end, { desc = 'Live Grep' })
-    vim.keymap.set('n', '<leader>fb', function() pickme.pick('buffers', { title = 'Buffers' }) end, { desc = 'Buffers' })
-    vim.keymap.set('n', '<leader>fh', function() pickme.pick('help', { title = 'Help Tags' }) end, { desc = 'Help Tags' })
-    vim.keymap.set('n', '<leader>fc', function() pickme.pick('commands', { title = 'Commands' }) end, { desc = 'Commands' })
-    vim.keymap.set('n', '<leader>fd', function() pickme.pick('diagnostics', { title = 'Diagnostics' }) end, { desc = 'Diagnostics' })
+    vim.keymap.set('n', '<leader>ff', function() pickme.pick('git_files', { title = 'Git Files' }) end, { desc = 'Git Files' })
+    vim.keymap.set('n', '<leader>fg', function() pickme.pick('live_grep') end, { desc = 'Live Grep' })
+    vim.keymap.set('n', '<leader>fa', ':PickMe files<cr>', { desc = 'All Files' })
 <
 
 
@@ -182,14 +290,7 @@ Run `:help pickme.txt` for more details.
 
 WHAT’S NEXT                               *pickme-pickme.nvim-what’s-next*
 
-Planning to add `<feature/module>`.
-
-
-TO-DO ~
-
-- Setup repo
-- Think real hard
-- Start typing
+- You tell me!
 
 
 BEHIND THE CODE                           *pickme-pickme.nvim-behind-the-code*
@@ -197,15 +298,14 @@ BEHIND THE CODE                           *pickme-pickme.nvim-behind-the-code*
 
 INSPIRATION ~
 
-pickme.nvim was inspired by nvim-plugin-template
-<https://github.com/ellisonleao/nvim-plugin-template>, I added some changes on
-top to make setting up a new plugin faster.
+I wanted an easy way to support different pickers in Neovim plugins, I wanted
+to create a unified interface for these pickers.
 
 
 CHALLENGES/LEARNINGS ~
 
-- The main challenges were `<issue/difficulty>`
-- I learned about `<learning/accomplishment>`
+- Finding information about different pickers supported by picker providers was time consuming.
+- Got to create a unified interface for different pickers.
 
 
 TOOLING ~
