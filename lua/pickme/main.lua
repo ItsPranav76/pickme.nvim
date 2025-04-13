@@ -9,7 +9,7 @@ local fzf_lua_prompt_suffix = ' '
 local function get_picker_command(command, opts)
     local picker_provider = opts.provider_override or config.config.picker_provider
 
-    if picker_provider == 'fzf-lua' and opts.title then
+    if picker_provider == 'fzf_lua' and opts.title then
         opts.prompt = opts.title .. fzf_lua_prompt_suffix
     end
 
