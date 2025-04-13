@@ -11,7 +11,7 @@ local config = {
     detect_provider = true,
     add_default_keybindings = false,
     command_aliases = {
-        git_log = 'git_commits',
+        grep = 'live_grep',
     },
 }
 

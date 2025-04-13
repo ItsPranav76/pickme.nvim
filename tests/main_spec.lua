@@ -181,7 +181,7 @@ describe('pickme.main', function()
                 assert.truthy(vim.tbl_contains(commands, 'buffers'))
 
                 -- Check for aliases
-                assert.truthy(vim.tbl_contains(commands, 'commit_log'))
+                assert.truthy(vim.tbl_contains(commands, 'grep'))
                 assert.truthy(vim.tbl_contains(commands, 'lol'))
 
                 local expected_count = get_size(provider.cmd_map) + get_size(config.config.command_aliases)
