@@ -1,7 +1,6 @@
 local assert = require('luassert.assert')
 local spy = require('luassert.spy')
 local stub = require('luassert.stub')
-local match = require('luassert.match')
 local describe = require('plenary.busted').describe
 local it = require('plenary.busted').it
 local before_each = require('plenary.busted').before_each
@@ -98,7 +97,7 @@ describe('pickme.telescope', function()
                         return fn
                     end
                 end
-            end
+            end,
         })
 
         -- Mock actions module with proper select_default object
