@@ -34,7 +34,7 @@
 
 A unified interface for multiple Neovim picker plugins.
 
-## Overview
+## ✨ Features
 
 `pickme.nvim` provides a consistent API to work with different picker plugins in Neovim. It currently supports:
 
@@ -43,7 +43,9 @@ A unified interface for multiple Neovim picker plugins.
 - [fzf-lua](https://github.com/ibhagwan/fzf-lua)
 - [mini.pick](https://github.com/echasnovski/mini.pick)
 
-## Installation
+## ⚡ Setup
+
+### 💻 Installation
 
 Using [lazy.nvim](https://github.com/folke/lazy.nvim):
 
@@ -52,15 +54,20 @@ Using [lazy.nvim](https://github.com/folke/lazy.nvim):
   '2KAbhishek/pickme.nvim',
   dependencies = {
     -- Include at least one of these pickers:
-    -- 'folke/snacks.nvim', -- For snacks.picker
+    'folke/snacks.nvim', -- For snacks.picker
     -- 'nvim-telescope/telescope.nvim', -- For telescope
     -- 'ibhagwan/fzf-lua', -- For fzf-lua
     -- 'echasnovski/mini.pick', -- For mini.pick
   }
+  opts = {
+    picker_provider = 'snacks', -- Default provider
+  },
 }
 ```
 
-## Configuration
+## 🚀 Usage
+
+### Configuration
 
 ```lua
 require('pickme').setup({
@@ -81,7 +88,7 @@ All these pickers are available through a unified interface regardless of the un
 - `oldfiles` - Browse recently opened files
 - `live_grep` - Search for a string in your project (grep)
 - `grep_string` - Search for the word under cursor
-- `current_buffer_fuzzy_find` - Search within the current buffer
+- `buffer_grep` - Search within the current buffer
 - `tags` - Browse ctags
 
 ### Git Integration
@@ -127,7 +134,7 @@ All these pickers are available through a unified interface regardless of the un
 - `select_file` - Custom file picker with provided items
 - `custom` - Fully customizable picker with custom items and handlers
 
-## Usage
+### Lua Usage
 
 ```lua
 local pickme = require('pickme')
@@ -135,12 +142,6 @@ local pickme = require('pickme')
 -- Basic usage
 pickme.pick('files', { title = 'Find Files' })
 pickme.pick('live_grep', { title = 'Search Text' })
-
--- With additional options
-pickme.pick('git_branches', {
-  title = 'Git Branches',
-  -- Additional options are passed to the underlying picker
-})
 
 -- Using custom picker
 pickme.pick('custom', {
@@ -159,7 +160,7 @@ pickme.pick('custom', {
 })
 ```
 
-## Key Mappings
+### Keybindings
 
 Example key mappings:
 
@@ -174,79 +175,9 @@ vim.keymap.set('n', '<leader>fc', function() pickme.pick('commands', { title = '
 vim.keymap.set('n', '<leader>fd', function() pickme.pick('diagnostics', { title = 'Diagnostics' }) end, { desc = 'Diagnostics' })
 ```
 
-## License
-
-Open source under the MIT License.
-
-## ✨ Features
-
-- Includes a ready to go neovim plugin template
-- Comes with a lint and test CI action
-- Includes a Github action to auto generate vimdocs
-- Comes with a ready to go README template
-- Works with [mkrepo](https://github.com/2kabhishek/mkrepo)
-
-## ⚡ Setup
-
-### ⚙️ Requirements
-
-- Latest version of `neovim`
-
-### 💻 Installation
-
-```lua
--- Lazy
-{
-    '2kabhishek/pickme.nvim',
-    cmd = 'TemplateHello',
-    -- Add your custom configs here, keep it blank for default configs (required)
-    opts = {},
-    -- Use this for local development
-    -- dir = '~/path-to/pickme.nvim',
-},
-```
-
-## 🚀 Usage
-
-1. Fork the `pickme.nvim` repo
-2. Update the plugin name, file names etc, change `template` to `your-plugin-name`
-3. Add the code required for your plugin,
-   - Code entrypoint is [template.lua](./lua/template.lua)
-   - Add user configs to [config.lua](./lua/template/config.lua)
-   - For adding commands and keybindngs use [commands.lua](./lua/template/commands.lua)
-   - Separate plugin logic into modules under [modules](./lua/template/) dir
-4. Add test code to the [tests](./tests/) directory
-5. Update the README
-6. Tweak the [docs action](./.github/workflows/docs.yml) file to reflect your plugin name, commit email and username
-   - Generating vimdocs needs read and write access to actions (repo settings > actions > general > workflow permissions)
-
-### Configuration
-
-pickme.nvim can be configured using the following options:
-
-```lua
-template.setup({
-    name = 'pickme.nvim', -- Name to be greeted, 'World' by default
-})
-```
-
-### Commands
-
-`pickme.nvim` adds the following commands:
-
-- `TemplateHello`: Shows a hello message with the confugred name.
-
-### Keybindings
-
-It is recommended to use:
-
-- `<leader>th,` for `TemplateHello`
-
-> NOTE: By default there are no configured keybindings.
-
 ### Help
 
-Run `:help template.txt` for more details.
+Run `:help pickme.txt` for more details.
 
 ## 🏗️ What's Next
 
