@@ -115,7 +115,6 @@ local function get_picker_command(command, opts)
                 require('fzf-lua').commands(opts)
             end,
             mini = function()
-                -- Mini.pick has no direct commands equivalent
                 require('mini.pick').builtin.cli({
                     command = 'nvim -c "silent verbose command" -c "silent qall!" | grep -v "Last set"',
                     prefix = '',
@@ -194,7 +193,7 @@ local function get_picker_command(command, opts)
         },
         lsp_document_symbols = {
             snacks = function()
-                require('snacks.picker').lsp_document_symbols(opts)
+                require('snacks.picker').lsp_symbols(opts)
             end,
             telescope = function()
                 require('telescope.builtin').lsp_document_symbols(opts)
@@ -273,7 +272,6 @@ local function get_picker_command(command, opts)
                 require('fzf-lua').keymaps(opts)
             end,
             mini = function()
-                -- Mini.pick has no direct keymaps equivalent
                 local cmd = 'nvim -c "silent! verbose map" -c "silent! qall!" | grep -v "Last set"'
                 require('mini.pick').builtin.cli({ command = cmd, prefix = '' })
             end,
@@ -331,7 +329,6 @@ local function get_picker_command(command, opts)
                 require('fzf-lua').highlights(opts)
             end,
             mini = function()
-                -- Mini.pick has no direct highlights equivalent
                 local cmd = 'nvim -c "silent! highlight" -c "silent! qall!"'
                 require('mini.pick').builtin.cli({ command = cmd, prefix = '' })
             end,
@@ -347,7 +344,6 @@ local function get_picker_command(command, opts)
                 require('fzf-lua').colorschemes(opts)
             end,
             mini = function()
-                -- Mini.pick has no direct colorschemes equivalent
                 require('mini.pick').builtin.cli({
                     command = "nvim --cmd 'echo getcompletion(\"\", \"color\")' --cmd 'q!' | grep -v '^\\s*$'",
                     processor = function(_, _, lines)
@@ -372,7 +368,6 @@ local function get_picker_command(command, opts)
                 require('fzf-lua').command_history(opts)
             end,
             mini = function()
-                -- Mini.pick doesn't have a direct command_history equivalent
                 require('mini.pick').builtin.pick({
                     source = function()
                         local history = {}
@@ -395,7 +390,6 @@ local function get_picker_command(command, opts)
                 require('fzf-lua').search_history(opts)
             end,
             mini = function()
-                -- Mini.pick doesn't have a direct search_history equivalent
                 require('mini.pick').builtin.pick({
                     source = function()
                         local history = {}
@@ -409,19 +403,7 @@ local function get_picker_command(command, opts)
         },
         spell_suggest = {
             snacks = function()
-                -- Snacks doesn't have a direct spell_suggest equivalent
-                local word = vim.fn.expand('<cword>')
-                local suggestions = vim.fn.spellsuggest(word)
-                require('snacks.picker').pick({
-                    items = vim.tbl_map(function(item)
-                        return { text = item }
-                    end, suggestions),
-                    title = "Spelling Suggestions for '" .. word .. "'",
-                    format = 'text',
-                    confirm = function(_, selection)
-                        vim.cmd('normal ciw' .. selection.text)
-                    end,
-                })
+                require('snacks.picker').spelling(opts)
             end,
             telescope = function()
                 require('telescope.builtin').spell_suggest(opts)
@@ -453,14 +435,10 @@ local function get_picker_command(command, opts)
             fzf_lua = function()
                 require('fzf-lua').resume(opts)
             end,
-            mini = function()
-                -- Mini.pick doesn't have a resume function
-                vim.notify('Resume not supported in mini.pick', vim.log.levels.WARN)
-            end,
         },
         jumplist = {
             snacks = function()
-                require('snacks.picker').jumplist(opts)
+                require('snacks.picker').jumps(opts)
             end,
             telescope = function()
                 require('telescope.builtin').jumplist(opts)
@@ -532,9 +510,6 @@ local function get_picker_command(command, opts)
             end,
         },
         tags = {
-            snacks = function()
-                require('snacks.picker').tags(opts)
-            end,
             telescope = function()
                 require('telescope.builtin').tags(opts)
             end,
@@ -552,7 +527,7 @@ local function get_picker_command(command, opts)
         },
         current_buffer_fuzzy_find = {
             snacks = function()
-                require('snacks.picker').buffer_lines(opts)
+                require('snacks.picker').lines(opts)
             end,
             telescope = function()
                 require('telescope.builtin').current_buffer_fuzzy_find(opts)
@@ -561,7 +536,6 @@ local function get_picker_command(command, opts)
                 require('fzf-lua').lgrep_curbuf(opts)
             end,
             mini = function()
-                -- Mini.pick approximation using grep in current buffer
                 local lines = vim.api.nvim_buf_get_lines(0, 0, -1, false)
                 require('mini.pick').builtin.pick({
                     source = lines,
@@ -584,10 +558,6 @@ local function get_picker_command(command, opts)
             fzf_lua = function()
                 require('fzf-lua').treesitter(opts)
             end,
-            mini = function()
-                -- Mini.pick doesn't have direct treesitter support
-                vim.notify('Treesitter picker not supported in mini.pick', vim.log.levels.WARN)
-            end,
         },
         git_stash = {
             snacks = function()
@@ -600,7 +570,6 @@ local function get_picker_command(command, opts)
                 require('fzf-lua').git_stash(opts)
             end,
             mini = function()
-                -- Mini.pick alternative implementation
                 require('mini.pick').builtin.cli({
                     command = 'git stash list',
                     processor = function(_, _, lines)
@@ -617,7 +586,7 @@ local function get_picker_command(command, opts)
         },
         man_pages = {
             snacks = function()
-                require('snacks.picker').man_pages(opts)
+                require('snacks.picker').man(opts)
             end,
             telescope = function()
                 require('telescope.builtin').man_pages(opts)
@@ -626,7 +595,6 @@ local function get_picker_command(command, opts)
                 require('fzf-lua').man_pages(opts)
             end,
             mini = function()
-                -- Mini.pick doesn't have direct man pages support
                 require('mini.pick').builtin.cli({
                     command = 'man -k . | sort',
                     processor = function(_, _, lines)
