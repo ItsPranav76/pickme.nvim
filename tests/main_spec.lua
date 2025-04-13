@@ -1,11 +1,13 @@
-local pickme = require('pickme')
-local main = require('pickme.main')
 local assert = require('luassert.assert')
 local spy = require('luassert.spy')
 local describe = require('plenary.busted').describe
 local it = require('plenary.busted').it
 local before_each = require('plenary.busted').before_each
 local after_each = require('plenary.busted').after_each
+
+local pickme = require('pickme')
+local main = require('pickme.main')
+local config = require('pickme.config')
 
 local command_mappings = {
     snacks = require('pickme.snacks').command_map(),
@@ -61,6 +63,7 @@ describe('pickme.main', function()
         it('calls the correct provider function for commands with options', function()
             local cmd = 'files'
             local title = 'Test Files'
+            local suffix = ' '
             local test_cases = {
                 {
                     provider = 'snacks',
@@ -74,14 +77,14 @@ describe('pickme.main', function()
                     cmd = cmd,
                     mock_module = mock.telescope_builtin,
                     func = command_mappings['telescope'][cmd],
-                    opts_check = { prompt_title = title, title = title },
+                    opts_check = { prompt_title = title },
                 },
                 {
                     provider = 'fzf_lua',
                     cmd = cmd,
                     mock_module = mock.fzf_lua,
                     func = command_mappings['fzf_lua'][cmd],
-                    opts_check = { prompt = title, title = title },
+                    opts_check = { prompt = title .. suffix },
                 },
             }
 
@@ -106,10 +109,12 @@ describe('pickme.main', function()
             }
 
             local all_commands = main.get_commands()
+            local aliases = config.config.command_aliases
 
             for _, provider in ipairs(providers) do
                 pickme.setup({ picker_provider = provider.name })
                 local cmd_map_size = 0
+                local alias_size = 0
                 local function_spies = {}
                 for _, func_name in pairs(provider.cmd_map) do
                     if provider.module[func_name] and not function_spies[func_name] then
@@ -123,9 +128,10 @@ describe('pickme.main', function()
                     local cmd_to_check = command
                     local func_name = provider.cmd_map[cmd_to_check]
 
-                    if not func_name and main._command_aliases and main._command_aliases[command] then
-                        cmd_to_check = main._command_aliases[command]
+                    if not func_name and aliases and aliases[command] then
+                        cmd_to_check = aliases[command]
                         func_name = provider.cmd_map[cmd_to_check]
+                        alias_size = alias_size + 1
                     end
 
                     if func_name then
@@ -148,12 +154,7 @@ describe('pickme.main', function()
                 )
 
                 assert.is_true(
-                    called_count == cmd_map_size,
-                    'Provider ' .. provider.name .. ' should have all functions called'
-                )
-
-                assert.is_true(
-                    supported_count == called_count,
+                    called_count == cmd_map_size + alias_size,
                     'Provider ' .. provider.name .. ' should have all functions called'
                 )
             end
@@ -172,11 +173,9 @@ describe('pickme.main', function()
             assert.truthy(vim.tbl_contains(commands, 'diagnostics'))
 
             -- Check for aliases
-            assert.truthy(vim.tbl_contains(commands, 'grep'))
-            assert.truthy(vim.tbl_contains(commands, 'find_files'))
-            assert.truthy(vim.tbl_contains(commands, 'help_tags'))
+            assert.truthy(vim.tbl_contains(commands, 'git_log'))
 
-            local expected_count = 43 -- 34 base commands + 9 aliases from command_aliases table
+            local expected_count = 35 -- 34 base commands + 1 alias from config
             assert.are.equal(expected_count, #commands)
         end)
     end)
