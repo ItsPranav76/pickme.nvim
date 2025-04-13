@@ -28,7 +28,9 @@ local provider_priority = { 'snacks', 'telescope', 'fzf_lua' }
 
 local function is_available(provider)
     local module = provider_modules[provider]
-    if not module then return false end
+    if not module then
+        return false
+    end
 
     local ok = pcall(require, module)
     return ok
@@ -63,8 +65,11 @@ M.setup = function(args)
         if selected_provider ~= available then
             if not is_available(selected_provider) and selected_provider ~= 'snacks' then
                 vim.notify(
-                    string.format('pickme.nvim: Selected provider "%s" not found. Using "%s" instead',
-                    selected_provider, available),
+                    string.format(
+                        'pickme.nvim: Selected provider "%s" not found. Using "%s" instead',
+                        selected_provider,
+                        available
+                    ),
                     vim.log.levels.WARN
                 )
             end
