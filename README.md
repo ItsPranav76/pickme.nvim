@@ -20,7 +20,7 @@
 <a href="https://github.com/2KAbhishek/pickme.nvim/pulse">
 <img alt="Last Updated" src="https://img.shields.io/github/last-commit/2kabhishek/pickme.nvim?style=flat&color=e06c75&label="> </a>
 
-<h3>Ready to go Neovim template 🏗️✈️</h3>
+<h3>One Picker to rule them all 💍👑</h3>
 
 <figure>
   <img src="doc/images/screenshot.png" alt="pickme.nvim in action">
