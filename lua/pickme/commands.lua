@@ -4,32 +4,54 @@ local config = require('pickme.config').config
 local M = {}
 
 M.setup = function()
-    vim.api.nvim_create_user_command('Pick', function(opts)
+    vim.api.nvim_create_user_command('PickMe', function(opts)
         local args = opts.args
         if args == '' then
-            print('Usage: Pick [picker_name] (e.g. Pick files, Pick live_grep)')
+            print('Usage: PickMe [picker_name] [provider] [title] (e.g. PickMe files snacks File picker)')
             return
         end
 
-        local cmd = args:match('^(%S+)')
-        local title_part = args:match('^%S+%s+(.*)')
-        local title = title_part or cmd:gsub('_', ' '):gsub('^%l', string.upper)
+        local parts = {}
+        for word in args:gmatch('%S+') do
+            table.insert(parts, word)
+        end
 
-        require('pickme').pick(cmd, { title = title })
+        local cmd = parts[1]
+        local provider_override = parts[2]
+        local title = table.concat(parts, ' ', 3)
+
+        local picker_opts = {}
+
+        if provider_override then
+            picker_opts.provider_override = provider_override
+        end
+
+        if title ~= '' then
+            picker_opts.title = title
+        end
+
+        require('pickme').pick(cmd, picker_opts)
     end, {
         nargs = '*',
-        desc = 'Use any picker',
+        desc = 'Use any picker with optional provider override',
         complete = function(ArgLead, CmdLine, CursorPos)
-            local pickers = pickme.get_commands()
-
-            local matches = {}
-            for _, picker in ipairs(pickers) do
-                if picker:find(ArgLead, 1, true) then
-                    table.insert(matches, picker)
-                end
+            local parts = {}
+            for word in CmdLine:gsub('^%s*PickMe%s+', ''):gmatch('%S+') do
+                table.insert(parts, word)
             end
 
-            return matches
+            if #parts == 0 then
+                local pickers = pickme.get_commands()
+                local matches = {}
+                for _, picker in ipairs(pickers) do
+                    if picker:find(ArgLead, 1, true) == 1 then
+                        table.insert(matches, picker)
+                    end
+                end
+                return matches
+            end
+
+            return {}
         end,
     })
 

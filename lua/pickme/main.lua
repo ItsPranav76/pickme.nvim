@@ -7,7 +7,7 @@ local fzf_lua_prompt_suffix = ' '
 
 ---@return function
 local function get_picker_command(command, opts)
-    local picker_provider = config.config.picker_provider
+    local picker_provider = opts.provider_override or config.config.picker_provider
 
     if picker_provider == 'fzf-lua' and opts.title then
         opts.prompt = opts.title .. fzf_lua_prompt_suffix
@@ -786,13 +786,17 @@ local command_aliases = {
 }
 
 M.pick = function(command, opts)
+    opts = opts or {}
     if command_aliases[command] then
         command = command_aliases[command]
     end
 
     vim.schedule(function()
-        local picker_cmd = get_picker_command(command, opts)
-        picker_cmd()
+        local ok, picker_cmd = pcall(get_picker_command, command, opts)
+
+        if ok and picker_cmd then
+            picker_cmd()
+        end
     end)
 end
 
