@@ -130,7 +130,7 @@ All these pickers are available through a unified interface regardless of the un
 ### Custom Pickers
 
 - `select_file` - Custom file picker with provided items
-- `custom` - Fully customizable picker with custom items and handlers
+- `custom_picker` - Fully customizable picker with custom items and handlers
 
 ### Lua Usage
 
@@ -142,7 +142,7 @@ pickme.pick('files', { title = 'Find Files' })
 pickme.pick('live_grep', { title = 'Search Text' })
 
 -- Using custom picker
-pickme.pick('custom', {
+pickme.custom_picker({
   title = 'My Custom Picker',
   items = {'item1', 'item2', 'item3'},
   entry_maker = function(item)
