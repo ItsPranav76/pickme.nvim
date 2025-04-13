@@ -115,45 +115,24 @@ local command_mappings = {
         treesitter = 'treesitter',
         man_pages = 'man_pages',
     },
-    mini = {
-        files = 'files',
-        git_files = 'files',
-        live_grep = 'grep',
-        grep_string = 'grep',
-        buffers = 'buffers',
-        help = 'help',
-    },
 }
 
 local mock = {}
 
 local mock_modules = {
-    { name = 'snacks', module = 'snacks_picker', is_nested = false, extra = { pick = function() end } },
-    { name = 'telescope', module = 'telescope_builtin', is_nested = false, extra = {} },
-    { name = 'fzf_lua', module = 'fzf_lua', is_nested = false, extra = { fzf_exec = function() end } },
-    { name = 'mini', module = 'mini_pick.builtin', is_nested = true, extra = {} },
+    { name = 'snacks', module = 'snacks_picker', extras = { 'pick' } },
+    { name = 'telescope', module = 'telescope_builtin', extras = {} },
+    { name = 'fzf_lua', module = 'fzf_lua', extras = { 'fzf_exec' } },
 }
 
 for _, provider in ipairs(mock_modules) do
-    if provider.is_nested then
-        local parts = vim.split(provider.module, '.', { plain = true })
-        mock[parts[1]] = { [parts[2]] = {} }
-        for _, func_name in pairs(command_mappings[provider.name]) do
-            mock[parts[1]][parts[2]][func_name] = function() end
-        end
-        -- Add any extra functions
-        for func_name, func in pairs(provider.extra) do
-            mock[parts[1]][parts[2]][func_name] = func
-        end
-    else
-        mock[provider.module] = {}
-        for _, func_name in pairs(command_mappings[provider.name]) do
-            mock[provider.module][func_name] = function() end
-        end
-        -- Add any extra functions
-        for func_name, func in pairs(provider.extra) do
-            mock[provider.module][func_name] = func
-        end
+    mock[provider.module] = {}
+    for _, func_name in pairs(command_mappings[provider.name]) do
+        mock[provider.module][func_name] = function() end
+    end
+    -- Add any extra functions
+    for _, func in pairs(provider.extras) do
+        mock[provider.module][func] = function() end
     end
 end
 
@@ -169,8 +148,6 @@ describe('pickme.main', function()
                 return mock.telescope_builtin
             elseif module_name == 'fzf-lua' then
                 return mock.fzf_lua
-            elseif module_name == 'mini.pick' then
-                return mock.mini_pick
             else
                 return orig_require(module_name)
             end
@@ -189,7 +166,7 @@ describe('pickme.main', function()
     end)
 
     describe('pick', function()
-        it('calls the correct provider function for basic commands', function()
+        it('calls the correct provider function for commands with options', function()
             local cmd = 'files'
             local title = 'Test Files'
             local test_cases = {
@@ -214,13 +191,6 @@ describe('pickme.main', function()
                     func = command_mappings['fzf_lua'][cmd],
                     opts_check = { prompt = title .. ' ', title = title },
                 },
-                {
-                    provider = 'mini',
-                    cmd = cmd,
-                    mock_module = mock.mini_pick.builtin,
-                    func = command_mappings['mini'][cmd],
-                    opts_check = { title = title },
-                },
             }
 
             for _, case in ipairs(test_cases) do
@@ -241,27 +211,23 @@ describe('pickme.main', function()
                 { name = 'snacks', module = mock.snacks_picker, cmd_map = command_mappings.snacks },
                 { name = 'telescope', module = mock.telescope_builtin, cmd_map = command_mappings.telescope },
                 { name = 'fzf_lua', module = mock.fzf_lua, cmd_map = command_mappings.fzf_lua },
-                { name = 'mini', module = mock.mini_pick.builtin, cmd_map = command_mappings.mini },
             }
 
             local all_commands = main.get_commands()
 
-            -- Test each provider
             for _, provider in ipairs(providers) do
                 pickme.setup({ picker_provider = provider.name })
-
-                -- Create spies for all functions in this provider's module
+                local cmd_map_size = 0
                 local function_spies = {}
                 for _, func_name in pairs(provider.cmd_map) do
                     if provider.module[func_name] and not function_spies[func_name] then
                         function_spies[func_name] = spy.on(provider.module, func_name)
+                        cmd_map_size = cmd_map_size + 1
                     end
                 end
 
-                -- Call each command that's supported by this provider
                 local supported_count = 0
                 for _, command in ipairs(all_commands) do
-                    -- Try both the command directly and any resolved alias
                     local cmd_to_check = command
                     local func_name = provider.cmd_map[cmd_to_check]
 
@@ -276,25 +242,27 @@ describe('pickme.main', function()
                     end
                 end
 
-                -- Check that we had at least some supported commands
-                assert.is_true(
-                    supported_count > 0,
-                    'Provider ' .. provider.name .. ' should support at least one command'
-                )
-
-                -- Verify that functions were called
                 local called_count = 0
-                for func_name, spy_obj in pairs(function_spies) do
+                for _, spy_obj in pairs(function_spies) do
                     if spy_obj.calls and #spy_obj.calls > 0 then
                         called_count = called_count + 1
                     end
-                    spy_obj:revert() -- Clean up the spy
+                    spy_obj:revert()
                 end
 
-                -- Make sure we had some function calls
                 assert.is_true(
-                    called_count > 0,
-                    'Provider ' .. provider.name .. ' should have at least one function called'
+                    supported_count == cmd_map_size,
+                    'Provider ' .. provider.name .. ' should support all commands in mock'
+                )
+
+                assert.is_true(
+                    called_count == cmd_map_size,
+                    'Provider ' .. provider.name .. ' should have all functions called'
+                )
+
+                assert.is_true(
+                    supported_count == called_count,
+                    'Provider ' .. provider.name .. ' should have all functions called'
                 )
             end
         end)
