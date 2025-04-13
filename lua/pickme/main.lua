@@ -816,4 +816,43 @@ M.pick = function(command, opts)
     end)
 end
 
+M.get_commands = function()
+    return {
+        'buffers',
+        'colorschemes',
+        'command_history',
+        'commands',
+        'current_buffer_fuzzy_find',
+        'diagnostics',
+        'files',
+        'git_branches',
+        'git_commits',
+        'git_files',
+        'git_stash',
+        'git_status',
+        'grep_string',
+        'help',
+        'highlights',
+        'jumplist',
+        'keymaps',
+        'live_grep',
+        'lsp_definitions',
+        'lsp_document_symbols',
+        'lsp_implementations',
+        'lsp_references',
+        'lsp_type_definitions',
+        'lsp_workspace_symbols',
+        'man_pages',
+        'marks',
+        'oldfiles',
+        'quickfix',
+        'registers',
+        'resume',
+        'search_history',
+        'spell_suggest',
+        'tags',
+        'treesitter',
+    }
+end
+
 return M
