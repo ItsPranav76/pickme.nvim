@@ -144,6 +144,7 @@ pickme.pick('files', { title = 'Find Files' })
 pickme.pick('live_grep', { title = 'Search Text' })
 
 -- Using custom picker
+-- You can find example usage in https://github.com/2kabhishek/octohub.nvim/blob/main/lua/octohub/repos.lua
 pickme.custom_picker({
   title = 'My Custom Picker',
   items = {'item1', 'item2', 'item3'},
@@ -181,24 +182,18 @@ Run `:help pickme.txt` for more details.
 
 ## 🏗️ What's Next
 
-Planning to add `<feature/module>`.
-
-### ✅ To-Do
-
-- [x] Setup repo
-- [ ] Think real hard
-- [ ] Start typing
+- You tell me!
 
 ## ⛅ Behind The Code
 
 ### 🌈 Inspiration
 
-pickme.nvim was inspired by [nvim-plugin-template](https://github.com/ellisonleao/nvim-plugin-template), I added some changes on top to make setting up a new plugin faster.
+I wanted an easy way to support different pickers in Neovim plugins, I wanted to create a unified interface for these pickers.
 
 ### 💡 Challenges/Learnings
 
-- The main challenges were `<issue/difficulty>`
-- I learned about `<learning/accomplishment>`
+- Finding information about different pickers supported by picker providers was time consuming.
+- Got to create a unified interface for different pickers.
 
 ### 🧰 Tooling
 
