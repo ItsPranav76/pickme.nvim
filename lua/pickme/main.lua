@@ -791,8 +791,23 @@ local function get_picker_command(command, opts)
     return picker_commands[command][picker_provider]
 end
 
+local command_aliases = {
+    find_files = 'files',
+    grep = 'live_grep',
+    grep_word = 'grep_string',
+    buffer_lines = 'current_buffer_fuzzy_find',
+    git_log = 'git_commits',
+    help_tags = 'help',
+    jumps = 'jumplist',
+    qflist = 'quickfix',
+    colorscheme = 'colorschemes',
+}
+
 M.pick = function(command, opts)
-    opts = opts or {}
+    if command_aliases[command] then
+        command = command_aliases[command]
+    end
+
     vim.schedule(function()
         local ok, picker_cmd = pcall(get_picker_command, command, opts)
         if ok and picker_cmd then
