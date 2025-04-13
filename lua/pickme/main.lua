@@ -81,10 +81,17 @@ M.pick = function(command, opts)
     end
     opts = handle_opts(opts, provider)
 
-    opts = handle_opts(opts)
     vim.schedule(function()
-        local cmd = require('pickme.' .. provider).command_map()[command]()
-        require(picker_provider_map[provider])[cmd](opts)
+        local cmd_map = require('pickme.' .. provider).command_map()
+        local cmd = cmd_map[command]
+        if cmd then
+            require(picker_provider_map[provider])[cmd](opts)
+        else
+            vim.notify(
+                string.format("Command '%s' not supported by provider '%s'", command, provider),
+                vim.log.levels.ERROR
+            )
+        end
     end)
 end
 
