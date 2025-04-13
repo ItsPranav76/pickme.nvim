@@ -45,21 +45,6 @@ A unified interface for multiple Neovim picker plugins.
 
 ## Installation
 
-Using [packer.nvim](https://github.com/wbthomason/packer.nvim):
-
-```lua
-use {
-  '2KAbhishek/pickme.nvim',
-  requires = {
-    -- Include at least one of these pickers:
-    -- {'folke/snacks.nvim'}, -- For snacks.picker
-    -- {'nvim-telescope/telescope.nvim'}, -- For telescope
-    -- {'ibhagwan/fzf-lua'}, -- For fzf-lua
-    -- {'echasnovski/mini.pick'}, -- For mini.pick
-  }
-}
-```
-
 Using [lazy.nvim](https://github.com/folke/lazy.nvim):
 
 ```lua
@@ -80,7 +65,7 @@ Using [lazy.nvim](https://github.com/folke/lazy.nvim):
 ```lua
 require('pickme').setup({
   -- Choose your preferred picker provider
-  picker_provider = 'telescope', -- Options: 'snacks', 'telescope', 'fzf_lua', 'mini'
+  picker_provider = 'snacks', -- Options: 'snacks' (default), 'telescope', 'fzf_lua', 'mini'
 })
 ```
 
@@ -89,24 +74,35 @@ require('pickme').setup({
 All these pickers are available through a unified interface regardless of the underlying provider:
 
 ### Files and Navigation
+
 - `files` - Find files in the current directory
 - `git_files` - Find files tracked by Git
 - `buffers` - Browse and select open buffers
 - `oldfiles` - Browse recently opened files
 - `live_grep` - Search for a string in your project (grep)
+- `grep_string` - Search for the word under cursor
+- `current_buffer_fuzzy_find` - Search within the current buffer
+- `tags` - Browse ctags
 
 ### Git Integration
+
 - `git_branches` - View and checkout git branches
 - `git_status` - View files with git status changes
 - `git_commits` - Browse git commit history
+- `git_stash` - Browse git stash entries
 
 ### LSP Features
+
 - `lsp_references` - Find references to the symbol under cursor
 - `lsp_document_symbols` - List symbols in current document
 - `lsp_workspace_symbols` - Search through workspace symbols
+- `lsp_definitions` - Go to definition of the symbol under cursor
+- `lsp_implementations` - Find implementations of the interface under cursor
+- `lsp_type_definitions` - Find type definitions
 - `diagnostics` - View and navigate diagnostic messages
 
 ### Neovim Functionality
+
 - `commands` - Browse available commands
 - `help` - Search through help tags
 - `marks` - View and jump to marks
@@ -114,14 +110,20 @@ All these pickers are available through a unified interface regardless of the un
 - `keymaps` - Browse configured key mappings
 - `highlights` - Browse highlight groups
 - `colorschemes` - Preview and apply colorschemes
+- `man_pages` - Browse man pages
+- `jumplist` - Navigate through jump history
+- `quickfix` - Browse quickfix list items
+- `treesitter` - Navigate treesitter symbols
 
 ### History and Resume
+
 - `command_history` - View command history
 - `search_history` - View search history
 - `spell_suggest` - Get spelling suggestions for word under cursor
 - `resume` - Resume the last picker
 
 ### Custom Pickers
+
 - `select_file` - Custom file picker with provided items
 - `custom` - Fully customizable picker with custom items and handlers
 
