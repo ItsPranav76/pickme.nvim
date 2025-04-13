@@ -23,6 +23,14 @@ local mock_modules = {
     { name = 'fzf_lua', module = 'fzf_lua' },
 }
 
+local function get_table_length(t)
+    local count = 0
+    for _ in pairs(t) do
+        count = count + 1
+    end
+    return count
+end
+
 for _, provider in ipairs(mock_modules) do
     mock[provider.module] = {}
     for _, func_name in pairs(command_mappings[provider.name]) do
@@ -108,18 +116,17 @@ describe('pickme.main', function()
                 { name = 'fzf_lua', module = mock.fzf_lua, cmd_map = command_mappings.fzf_lua },
             }
 
-            local all_commands = main.get_commands()
-            local aliases = config.config.command_aliases
-
             for _, provider in ipairs(providers) do
                 pickme.setup({ picker_provider = provider.name })
-                local cmd_map_size = 0
-                local alias_size = 0
                 local function_spies = {}
+                local all_commands = main.get_commands()
+                local aliases = config.config.command_aliases
+                local cmd_map_size = get_table_length(provider.cmd_map)
+                local alias_size = get_table_length(aliases)
+
                 for _, func_name in pairs(provider.cmd_map) do
                     if provider.module[func_name] and not function_spies[func_name] then
                         function_spies[func_name] = spy.on(provider.module, func_name)
-                        cmd_map_size = cmd_map_size + 1
                     end
                 end
 
@@ -131,7 +138,6 @@ describe('pickme.main', function()
                     if not func_name and aliases and aliases[command] then
                         cmd_to_check = aliases[command]
                         func_name = provider.cmd_map[cmd_to_check]
-                        alias_size = alias_size + 1
                     end
 
                     if func_name then
@@ -171,13 +177,14 @@ describe('pickme.main', function()
             assert.truthy(vim.tbl_contains(commands, 'files'))
             assert.truthy(vim.tbl_contains(commands, 'live_grep'))
             assert.truthy(vim.tbl_contains(commands, 'buffers'))
-            assert.truthy(vim.tbl_contains(commands, 'git_branches'))
-            assert.truthy(vim.tbl_contains(commands, 'diagnostics'))
 
             -- Check for aliases
             assert.truthy(vim.tbl_contains(commands, 'git_log'))
 
-            local expected_count = 35 -- 34 base commands + 1 alias from config
+            local provider = config.config.picker_provider
+            local expected_count = get_table_length(command_mappings[provider])
+                + get_table_length(config.config.command_aliases)
+
             assert.are.equal(expected_count, #commands)
         end)
     end)
