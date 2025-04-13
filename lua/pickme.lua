@@ -11,4 +11,12 @@ M.pick = function(command, opts)
     return main.pick(command, opts)
 end
 
+M.select_file = function(opts)
+    return main.select_file(opts)
+end
+
+M.custom_picker = function(opts)
+    return main.custom_picker(opts)
+end
+
 return M
