@@ -823,7 +823,7 @@ M.pick = function(command, opts)
 end
 
 M.get_commands = function()
-    return {
+    local commands = {
         'buffers',
         'colorschemes',
         'command_history',
@@ -859,6 +859,12 @@ M.get_commands = function()
         'tags',
         'treesitter',
     }
+
+    for alias, _ in pairs(command_aliases) do
+        table.insert(commands, alias)
+    end
+
+    return commands
 end
 
 return M
