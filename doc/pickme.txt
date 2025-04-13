@@ -1,24 +1,24 @@
-*template.txt*          For Neovim >= 0.8.0         Last change: 2025 April 13
+*pickme.txt*           For Neovim >= 0.8.0          Last change: 2025 April 13
 
 ==============================================================================
-Table of Contents                                 *template-table-of-contents*
+Table of Contents                                   *pickme-table-of-contents*
 
-1. pickme.nvim                                          |template-pickme.nvim|
-  - Features                                   |template-pickme.nvim-features|
-  - Setup                                         |template-pickme.nvim-setup|
-  - Usage                                         |template-pickme.nvim-usage|
-  - Available Pickers                 |template-pickme.nvim-available-pickers|
-  - What’s Next                         |template-pickme.nvim-what’s-next|
-  - Behind The Code                     |template-pickme.nvim-behind-the-code|
+1. pickme.nvim                                            |pickme-pickme.nvim|
+  - Features                                     |pickme-pickme.nvim-features|
+  - Setup                                           |pickme-pickme.nvim-setup|
+  - Usage                                           |pickme-pickme.nvim-usage|
+  - Available Pickers                   |pickme-pickme.nvim-available-pickers|
+  - What’s Next                           |pickme-pickme.nvim-what’s-next|
+  - Behind The Code                       |pickme-pickme.nvim-behind-the-code|
 
 
 ==============================================================================
-1. pickme.nvim                                          *template-pickme.nvim*
+1. pickme.nvim                                            *pickme-pickme.nvim*
 
 A unified interface for multiple Neovim picker plugins.
 
 
-FEATURES                                       *template-pickme.nvim-features*
+FEATURES                                         *pickme-pickme.nvim-features*
 
 `pickme.nvim` provides a consistent API to work with different picker plugins
 in Neovim. It currently supports:
@@ -28,7 +28,7 @@ in Neovim. It currently supports:
 - fzf-lua <https://github.com/ibhagwan/fzf-lua>
 
 
-SETUP                                             *template-pickme.nvim-setup*
+SETUP                                               *pickme-pickme.nvim-setup*
 
 
 INSTALLATION ~
@@ -51,7 +51,7 @@ Using lazy.nvim <https://github.com/folke/lazy.nvim>
 <
 
 
-USAGE                                             *template-pickme.nvim-usage*
+USAGE                                               *pickme-pickme.nvim-usage*
 
 
 CONFIGURATION ~
@@ -64,7 +64,7 @@ CONFIGURATION ~
 <
 
 
-AVAILABLE PICKERS                     *template-pickme.nvim-available-pickers*
+AVAILABLE PICKERS                       *pickme-pickme.nvim-available-pickers*
 
 All these pickers are available through a unified interface regardless of the
 underlying provider:
@@ -178,7 +178,7 @@ HELP ~
 Run `:help pickme.txt` for more details.
 
 
-WHAT’S NEXT                             *template-pickme.nvim-what’s-next*
+WHAT’S NEXT                               *pickme-pickme.nvim-what’s-next*
 
 Planning to add `<feature/module>`.
 
@@ -190,7 +190,7 @@ TO-DO ~
 - Start typing
 
 
-BEHIND THE CODE                         *template-pickme.nvim-behind-the-code*
+BEHIND THE CODE                           *pickme-pickme.nvim-behind-the-code*
 
 
 INSPIRATION ~
