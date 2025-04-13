@@ -38,6 +38,8 @@ Using lazy.nvim <https://github.com/folke/lazy.nvim>
 >lua
     {
       '2KAbhishek/pickme.nvim',
+      cmd = 'PickMe',
+      event = 'VeryLazy',
       dependencies = {
         -- Include at least one of these pickers:
         'folke/snacks.nvim', -- For snacks.picker
@@ -134,11 +136,11 @@ LUA USAGE ~
 
 >lua
     local pickme = require('pickme')
-
+    
     -- Basic usage
     pickme.pick('files', { title = 'Find Files' })
     pickme.pick('live_grep', { title = 'Search Text' })
-
+    
     -- Using custom picker
     pickme.custom_picker({
       title = 'My Custom Picker',
@@ -163,7 +165,7 @@ Example key mappings:
 
 >lua
     local pickme = require('pickme')
-
+    
     vim.keymap.set('n', '<leader>ff', function() pickme.pick('files', { title = 'Find Files' }) end, { desc = 'Find Files' })
     vim.keymap.set('n', '<leader>fg', function() pickme.pick('live_grep', { title = 'Search Text' }) end, { desc = 'Live Grep' })
     vim.keymap.set('n', '<leader>fb', function() pickme.pick('buffers', { title = 'Buffers' }) end, { desc = 'Buffers' })
