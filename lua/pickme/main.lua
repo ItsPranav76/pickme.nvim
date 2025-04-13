@@ -40,17 +40,22 @@ local picker_provider_map = {
     fzf_lua = 'fzf-lua',
 }
 
-local function handle_opts(opts)
+local function handle_opts(opts, provider)
+    opts = opts or {}
+
     if opts.provider_override then
-        opts.prider_override = nil
+        opts.provider_override = nil
     end
 
-    if picker_provider == 'fzf_lua' and opts.title then
+    if provider == 'fzf_lua' and opts.title then
+        local fzf_lua_prompt_suffix = ' '
         opts.prompt = opts.title .. fzf_lua_prompt_suffix
+        opts.title = nil
     end
 
-    if picker_provider == 'telescope' and opts.title then
+    if provider == 'telescope' and opts.title then
         opts.prompt_title = opts.title
+        opts.title = nil
     end
     return opts
 end
@@ -109,6 +114,7 @@ M.pick = function(command, opts)
     if command_aliases[command] then
         command = command_aliases[command]
     end
+    opts = handle_opts(opts, provider)
 
     opts = handle_opts(opts)
     vim.schedule(function()
@@ -122,7 +128,7 @@ M.select_file = function(opts)
     opts = opts or {}
     local provider = opts.provider_override or config.config.picker_provider
 
-    opts = handle_opts(opts)
+    opts = handle_opts(opts, provider)
     vim.schedule(function()
         require('pickme.' .. provider).select_file(opts)
     end)
@@ -133,7 +139,7 @@ M.custom_picker = function(opts)
     opts = opts or {}
     local provider = opts.provider_override or config.config.picker_provider
 
-    opts = handle_opts(opts)
+    opts = handle_opts(opts, provider)
     vim.schedule(function()
         require('pickme.' .. provider).custom_picker(opts)
     end)
