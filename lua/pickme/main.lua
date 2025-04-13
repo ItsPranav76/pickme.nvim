@@ -28,9 +28,6 @@ local function get_picker_command(command, opts)
             fzf_lua = function()
                 require('fzf-lua').git_files(opts)
             end,
-            mini = function()
-                require('mini.pick').builtin.files(opts)
-            end,
         },
         files = {
             snacks = function()
@@ -41,9 +38,6 @@ local function get_picker_command(command, opts)
             end,
             fzf_lua = function()
                 require('fzf-lua').files(opts)
-            end,
-            mini = function()
-                require('mini.pick').builtin.files(opts)
             end,
         },
         live_grep = {
@@ -56,9 +50,6 @@ local function get_picker_command(command, opts)
             fzf_lua = function()
                 require('fzf-lua').live_grep(opts)
             end,
-            mini = function()
-                require('mini.pick').builtin.grep(opts)
-            end,
         },
         grep_string = {
             snacks = function()
@@ -69,11 +60,6 @@ local function get_picker_command(command, opts)
             end,
             fzf_lua = function()
                 require('fzf-lua').grep_cword(opts)
-            end,
-            mini = function()
-                local word = vim.fn.expand('<cword>')
-                opts.pattern = word
-                require('mini.pick').builtin.grep(opts)
             end,
         },
         buffers = {
@@ -86,9 +72,6 @@ local function get_picker_command(command, opts)
             fzf_lua = function()
                 require('fzf-lua').buffers(opts)
             end,
-            mini = function()
-                require('mini.pick').builtin.buffers(opts)
-            end,
         },
         help = {
             snacks = function()
@@ -99,9 +82,6 @@ local function get_picker_command(command, opts)
             end,
             fzf_lua = function()
                 require('fzf-lua').help_tags(opts)
-            end,
-            mini = function()
-                require('mini.pick').builtin.help(opts)
             end,
         },
         commands = {

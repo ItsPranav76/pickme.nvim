@@ -41,7 +41,6 @@ A unified interface for multiple Neovim picker plugins.
 - [Snacks.picker](https://github.com/folke/snacks.nvim/blob/main/docs/picker.md)
 - [Telescope](https://github.com/nvim-telescope/telescope.nvim)
 - [fzf-lua](https://github.com/ibhagwan/fzf-lua)
-- [mini.pick](https://github.com/echasnovski/mini.pick)
 
 ## ⚡ Setup
 
@@ -57,7 +56,6 @@ Using [lazy.nvim](https://github.com/folke/lazy.nvim):
     'folke/snacks.nvim', -- For snacks.picker
     -- 'nvim-telescope/telescope.nvim', -- For telescope
     -- 'ibhagwan/fzf-lua', -- For fzf-lua
-    -- 'echasnovski/mini.pick', -- For mini.pick
   }
   opts = {
     picker_provider = 'snacks', -- Default provider
@@ -72,7 +70,7 @@ Using [lazy.nvim](https://github.com/folke/lazy.nvim):
 ```lua
 require('pickme').setup({
   -- Choose your preferred picker provider
-  picker_provider = 'snacks', -- Options: 'snacks' (default), 'telescope', 'fzf_lua', 'mini'
+  picker_provider = 'snacks', -- Options: 'snacks' (default), 'telescope', 'fzf_lua'
 })
 ```
 

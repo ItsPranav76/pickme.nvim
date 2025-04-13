@@ -2,7 +2,7 @@
 local M = {}
 
 ---@class PickMe.Config.config
----@field picker_provider string snacks (default) | telescope | fzf_lua | mini
+---@field picker_provider string snacks (default) | telescope | fzf_lua
 ---@field detect_provider boolean auto-detect the picker provider (default: true)
 ---@field add_default_keybindings boolean add default keybindings (default: false)
 local config = {
@@ -18,10 +18,9 @@ local provider_modules = {
     snacks = 'snacks.picker',
     telescope = 'telescope.builtin',
     fzf_lua = 'fzf-lua',
-    mini = 'mini.pick',
 }
 
-local provider_priority = { 'snacks', 'telescope', 'fzf_lua', 'mini' }
+local provider_priority = { 'snacks', 'telescope', 'fzf_lua' }
 
 local function is_available(provider)
     local module = provider_modules[provider]
@@ -51,7 +50,7 @@ M.setup = function(args)
 
         if not available then
             vim.notify(
-                'pickme.nvim: No picker provider found. Please install one of: telescope.nvim, snacks.nvim, fzf-lua, or mini.pick',
+                'pickme.nvim: No picker provider found. Please install one of: telescope.nvim, snacks.nvim, or fzf-lua',
                 vim.log.levels.WARN
             )
             return
