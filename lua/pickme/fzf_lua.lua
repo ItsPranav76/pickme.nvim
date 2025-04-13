@@ -101,7 +101,6 @@ M.command_map = function()
         lsp_workspace_symbols = 'lsp_workspace_symbols',
         man = 'manpages',
         marks = 'marks',
-        notifications = 'notify',
         oldfiles = 'oldfiles',
         options = 'nvim_options',
         pickers = 'builtin',
