@@ -49,46 +49,22 @@ local function handle_opts(opts, provider)
 end
 
 ---@return table
-M.get_commands = function()
-    local commands = {
-        'buffer_grep',
-        'buffers',
-        'colorschemes',
-        'command_history',
-        'commands',
-        'diagnostics',
-        'files',
-        'git_branches',
-        'git_commits',
-        'git_files',
-        'git_stash',
-        'git_status',
-        'grep_string',
-        'help',
-        'highlights',
-        'jumplist',
-        'keymaps',
-        'live_grep',
-        'lsp_definitions',
-        'lsp_document_symbols',
-        'lsp_implementations',
-        'lsp_references',
-        'lsp_type_definitions',
-        'lsp_workspace_symbols',
-        'man_pages',
-        'marks',
-        'oldfiles',
-        'quickfix',
-        'registers',
-        'resume',
-        'search_history',
-        'spell_suggest',
-        'tags',
-        'treesitter',
-    }
 
-    for alias, _ in pairs(command_aliases) do
-        table.insert(commands, alias)
+M.get_commands = function()
+    local commands = {}
+    local seen = {}
+    local snacks_cmds = require('pickme.snacks').command_map()
+    local telescope_cmds = require('pickme.telescope').command_map()
+    local fzf_lua_cmds = require('pickme.fzf_lua').command_map()
+    local command_aliases = config.config.command_aliases
+
+    for _, cmds in ipairs({ snacks_cmds, telescope_cmds, fzf_lua_cmds, command_aliases }) do
+        for cmd, _ in pairs(cmds) do
+            if not seen[cmd] then
+                seen[cmd] = true
+                table.insert(commands, cmd)
+            end
+        end
     end
 
     return commands
