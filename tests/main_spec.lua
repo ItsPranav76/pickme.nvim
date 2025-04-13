@@ -9,6 +9,14 @@ local pickme = require('pickme')
 local main = require('pickme.main')
 local config = require('pickme.config')
 
+local function get_size(t)
+    local count = 0
+    for _ in pairs(t) do
+        count = count + 1
+    end
+    return count
+end
+
 local command_mappings = {
     snacks = require('pickme.snacks').command_map(),
     telescope = require('pickme.telescope').command_map(),
@@ -23,20 +31,18 @@ local mock_modules = {
     { name = 'fzf_lua', module = 'fzf_lua' },
 }
 
-local function get_table_length(t)
-    local count = 0
-    for _ in pairs(t) do
-        count = count + 1
-    end
-    return count
-end
-
 for _, provider in ipairs(mock_modules) do
     mock[provider.module] = {}
     for _, func_name in pairs(command_mappings[provider.name]) do
         mock[provider.module][func_name] = function() end
     end
 end
+
+local providers = {
+    { name = 'snacks', module = mock.snacks_picker, cmd_map = command_mappings.snacks },
+    { name = 'telescope', module = mock.telescope_builtin, cmd_map = command_mappings.telescope },
+    { name = 'fzf_lua', module = mock.fzf_lua, cmd_map = command_mappings.fzf_lua },
+}
 
 describe('pickme.main', function()
     local orig_require = _G.require
@@ -110,19 +116,13 @@ describe('pickme.main', function()
         end)
 
         it('calls the correct provider function for all supported commands', function()
-            local providers = {
-                { name = 'snacks', module = mock.snacks_picker, cmd_map = command_mappings.snacks },
-                { name = 'telescope', module = mock.telescope_builtin, cmd_map = command_mappings.telescope },
-                { name = 'fzf_lua', module = mock.fzf_lua, cmd_map = command_mappings.fzf_lua },
-            }
-
             for _, provider in ipairs(providers) do
                 pickme.setup({ picker_provider = provider.name })
                 local function_spies = {}
                 local all_commands = main.get_commands()
                 local aliases = config.config.command_aliases
-                local cmd_map_size = get_table_length(provider.cmd_map)
-                local alias_size = get_table_length(aliases)
+                local cmd_map_size = get_size(provider.cmd_map)
+                local alias_size = get_size(aliases)
 
                 for _, func_name in pairs(provider.cmd_map) do
                     if provider.module[func_name] and not function_spies[func_name] then
@@ -171,21 +171,22 @@ describe('pickme.main', function()
 
     describe('get_commands', function()
         it('returns all available commands', function()
-            local commands = main.get_commands()
+            for _, provider in ipairs(providers) do
+                pickme.setup({ picker_provider = provider.name, command_aliases = { lol = 'lolcat' } })
+                local commands = main.get_commands()
 
-            -- Check for some core commands
-            assert.truthy(vim.tbl_contains(commands, 'files'))
-            assert.truthy(vim.tbl_contains(commands, 'live_grep'))
-            assert.truthy(vim.tbl_contains(commands, 'buffers'))
+                -- Check for some core commands
+                assert.truthy(vim.tbl_contains(commands, 'files'))
+                assert.truthy(vim.tbl_contains(commands, 'live_grep'))
+                assert.truthy(vim.tbl_contains(commands, 'buffers'))
 
-            -- Check for aliases
-            assert.truthy(vim.tbl_contains(commands, 'git_log'))
+                -- Check for aliases
+                assert.truthy(vim.tbl_contains(commands, 'commit_log'))
+                assert.truthy(vim.tbl_contains(commands, 'lol'))
 
-            local provider = config.config.picker_provider
-            local expected_count = get_table_length(command_mappings[provider])
-                + get_table_length(config.config.command_aliases)
-
-            assert.are.equal(expected_count, #commands)
+                local expected_count = get_size(provider.cmd_map) + get_size(config.config.command_aliases)
+                assert.are.equal(expected_count, #commands, 'Provider ' .. provider.name .. ' should have all commands')
+            end
         end)
     end)
 end)

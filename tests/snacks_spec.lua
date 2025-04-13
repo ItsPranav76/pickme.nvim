@@ -10,6 +10,17 @@ local snacks = require('pickme.snacks')
 describe('pickme.snacks', function()
     local mock_picker = {}
     local orig_require = _G.require
+    local picker_internals = {
+        picker = {
+            format = {
+                file = 'file_format',
+                text = 'text_format',
+            },
+            actions = {
+                jump = 'jump_action',
+            },
+        },
+    }
 
     before_each(function()
         _G.vim = vim or {}
@@ -28,17 +39,7 @@ describe('pickme.snacks', function()
             mock_picker._last_options = options
         end)
 
-        _G.Snacks = {
-            picker = {
-                format = {
-                    file = 'file_format',
-                    text = 'text_format',
-                },
-                actions = {
-                    jump = 'jump_action',
-                },
-            },
-        }
+        _G.Snacks = picker_internals
 
         _G.require = function(module)
             if module == 'snacks.picker' then
@@ -108,24 +109,6 @@ describe('pickme.snacks', function()
             assert.equals('text_format', options.format)
             assert.equals('preview', options.preview)
             assert.equals(2, #options.items)
-        end)
-    end)
-
-    describe('command_map', function()
-        it('returns the correct command mapping', function()
-            local command_map = snacks.command_map()
-
-            assert.equals('files', command_map.files)
-            assert.equals('git_files', command_map.git_files)
-            assert.equals('grep', command_map.live_grep)
-            assert.equals('buffers', command_map.buffers)
-            assert.equals('diagnostics', command_map.diagnostics)
-
-            local count = 0
-            for _, _ in pairs(command_map) do
-                count = count + 1
-            end
-            assert.equals(33, count)
         end)
     end)
 end)

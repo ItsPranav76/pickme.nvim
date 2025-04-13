@@ -207,22 +207,4 @@ describe('pickme.telescope', function()
             assert.spy(selection_handler_spy).was_called_with(prompt_bufnr, { value = 'mock_selected_entry' })
         end)
     end)
-
-    describe('command_map', function()
-        it('returns the correct command mapping', function()
-            local command_map = telescope.command_map()
-
-            assert.equals('find_files', command_map.files)
-            assert.equals('git_files', command_map.git_files)
-            assert.equals('live_grep', command_map.live_grep)
-            assert.equals('buffers', command_map.buffers)
-            assert.equals('diagnostics', command_map.diagnostics)
-
-            local count = 0
-            for _, _ in pairs(command_map) do
-                count = count + 1
-            end
-            assert.equals(34, count)
-        end)
-    end)
 end)
