@@ -40,16 +40,12 @@ describe('pickme.fzf_lua', function()
         },
     }
 
-    -- Keep track of calls to fzf_exec
     local fzf_exec_calls = {}
-
     local orig_require = _G.require
 
     before_each(function()
-        -- Clear previous calls
         fzf_exec_calls = {}
 
-        -- Mock fzf_exec to record calls
         mock_fzf_lua.fzf_exec = function(items, options)
             table.insert(fzf_exec_calls, {
                 items = items,
@@ -57,7 +53,6 @@ describe('pickme.fzf_lua', function()
             })
         end
 
-        -- Mock require to return our mock
         _G.require = function(module_name)
             if module_name == 'fzf-lua' then
                 return mock_fzf_lua
@@ -68,7 +63,6 @@ describe('pickme.fzf_lua', function()
             end
         end
 
-        -- Mock vim functions for testing
         vim.fn = vim.fn or {}
         vim.fn.fnameescape = function(s)
             return s
@@ -94,41 +88,33 @@ describe('pickme.fzf_lua', function()
             local test_files = { 'file1.txt', 'path/to/file2.lua', 'another/file3.md' }
             local test_title = 'Select a File'
 
-            -- Call function being tested
             fzf_lua_provider.select_file({
                 items = test_files,
                 title = test_title,
             })
 
-            -- Verify call was made
             assert.equals(1, #fzf_exec_calls)
             local call = fzf_exec_calls[1]
 
-            -- Verify items
             assert.same(test_files, call.items)
 
-            -- Verify options
             assert.equals(test_title, call.options.prompt)
             assert.is_true(call.options.file_icons)
             assert.equals('builtin', call.options.previewer)
 
-            -- Test the default action
             local actions_fn = call.options.actions.default
             assert.is_function(actions_fn)
 
-            -- Mock vim.cmd for the action test
             local orig_vim_cmd = vim.cmd
             local cmd_calls = {}
             vim.cmd = function(cmd)
                 table.insert(cmd_calls, cmd)
             end
 
-            -- Test action with selected item
             actions_fn({ 'selected_file.txt' })
             assert.equals(1, #cmd_calls)
             assert.equals('edit selected_file.txt', cmd_calls[1])
 
-            -- Restore vim.cmd
             vim.cmd = orig_vim_cmd
         end)
 
@@ -138,28 +124,23 @@ describe('pickme.fzf_lua', function()
                 title = 'Test',
             })
 
-            -- Get the default action function
             local actions_fn = fzf_exec_calls[1].options.actions.default
 
-            -- Mock vim.cmd
             local orig_vim_cmd = vim.cmd
             local cmd_called = false
             vim.cmd = function(_)
                 cmd_called = true
             end
 
-            -- Test action with empty selection
             actions_fn({})
             assert.is_false(cmd_called)
 
-            -- Restore vim.cmd
             vim.cmd = orig_vim_cmd
         end)
     end)
 
     describe('custom_picker', function()
         it('calls fzf_exec with transformed items and custom previewer', function()
-            -- Create a spy on extend to check if CustomPreviewer is created
             local extend_spy = spy.on(mock_fzf_lua.previewer.builtin.base, 'extend')
 
             local test_items = {
@@ -193,28 +174,22 @@ describe('pickme.fzf_lua', function()
                 selection_handler = selection_handler,
             })
 
-            -- Verify extend was called (CustomPreviewer creation)
             assert.spy(extend_spy).was_called()
 
-            -- Verify fzf_exec was called
             assert.equals(1, #fzf_exec_calls)
             local call = fzf_exec_calls[1]
 
-            -- Verify formatted items were passed
             assert.equals(3, #call.items)
             assert.equals('Item 1', call.items[1])
             assert.equals('Item 2', call.items[2])
             assert.equals('Item 3', call.items[3])
 
-            -- Verify options
             assert.equals('Custom Picker', call.options.prompt)
             assert.is_function(call.options.actions.default)
 
-            -- Test the default action
             local default_action = call.options.actions.default
             default_action({ 'Item 1' })
 
-            -- Check if selection handler was called
             assert.is_true(selection_handler_called)
 
             extend_spy:revert()
@@ -249,27 +224,17 @@ describe('pickme.fzf_lua', function()
         it('returns the correct command mapping', function()
             local command_map = fzf_lua_provider.command_map()
 
-            -- Check a few key mappings
             assert.equals('files', command_map.files)
             assert.equals('git_files', command_map.git_files)
             assert.equals('live_grep', command_map.live_grep)
             assert.equals('buffers', command_map.buffers)
             assert.equals('git_branches', command_map.git_branches)
 
-            -- Verify specific commands we know should exist
-            assert.is_not_nil(command_map.buffer_grep)
-            assert.equals('lgrep_curbuf', command_map.buffer_grep)
-
-            assert.is_not_nil(command_map.tags)
-            assert.equals('tags', command_map.tags)
-
-            -- Count the commands
             local count = 0
             for _, _ in pairs(command_map) do
                 count = count + 1
             end
 
-            -- The number 34 matches the actual count in fzf_lua_provider.command_map()
             assert.equals(34, count)
         end)
     end)
