@@ -9,11 +9,11 @@ local fzf_lua_prompt_suffix = ' '
 local function get_picker_command(command, opts)
     local picker_provider = config.config.picker_provider
 
-    if picker_provider == 'fzf-lua' then
+    if picker_provider == 'fzf-lua' and opts.title then
         opts.prompt = opts.title .. fzf_lua_prompt_suffix
     end
 
-    if picker_provider == 'telescope' then
+    if picker_provider == 'telescope' and opts.title then
         opts.prompt_title = opts.title
     end
 
@@ -71,7 +71,7 @@ local function get_picker_command(command, opts)
                 require('fzf-lua').grep_cword(opts)
             end,
             mini = function()
-                local word = vim.fn.expand("<cword>")
+                local word = vim.fn.expand('<cword>')
                 opts.pattern = word
                 require('mini.pick').builtin.grep(opts)
             end,
@@ -231,7 +231,7 @@ local function get_picker_command(command, opts)
                 require('fzf-lua').lsp_typedefs(opts)
             end,
             mini = function()
-                require('mini.pick').builtin.lsp({scope = 'type_definition'})
+                require('mini.pick').builtin.lsp({ scope = 'type_definition' })
             end,
         },
         lsp_definitions = {
@@ -245,7 +245,7 @@ local function get_picker_command(command, opts)
                 require('fzf-lua').lsp_definitions(opts)
             end,
             mini = function()
-                require('mini.pick').builtin.lsp({scope = 'definition'})
+                require('mini.pick').builtin.lsp({ scope = 'definition' })
             end,
         },
         lsp_implementations = {
@@ -259,7 +259,7 @@ local function get_picker_command(command, opts)
                 require('fzf-lua').lsp_implementations(opts)
             end,
             mini = function()
-                require('mini.pick').builtin.lsp({scope = 'implementations'})
+                require('mini.pick').builtin.lsp({ scope = 'implementations' })
             end,
         },
         keymaps = {
@@ -280,7 +280,7 @@ local function get_picker_command(command, opts)
         },
         oldfiles = {
             snacks = function()
-                require('snacks.picker').oldfiles(opts)
+                require('snacks.picker').recent(opts)
             end,
             telescope = function()
                 require('telescope.builtin').oldfiles(opts)
@@ -473,12 +473,12 @@ local function get_picker_command(command, opts)
                 local entries = {}
                 for i, item in ipairs(jump_items) do
                     local bufname = vim.api.nvim_buf_get_name(item.bufnr)
-                    if bufname and bufname ~= "" then
+                    if bufname and bufname ~= '' then
                         table.insert(entries, {
-                            display = string.format("%d: %s:%d", i, vim.fn.fnamemodify(bufname, ":~:."), item.lnum),
+                            display = string.format('%d: %s:%d', i, vim.fn.fnamemodify(bufname, ':~:.'), item.lnum),
                             bufnr = item.bufnr,
                             lnum = item.lnum,
-                            col = item.col
+                            col = item.col,
                         })
                     end
                 end
@@ -487,8 +487,8 @@ local function get_picker_command(command, opts)
                     source = entries,
                     choose = function(entry)
                         vim.api.nvim_set_current_buf(entry.bufnr)
-                        vim.api.nvim_win_set_cursor(0, {entry.lnum, entry.col})
-                    end
+                        vim.api.nvim_win_set_cursor(0, { entry.lnum, entry.col })
+                    end,
                 })
             end,
         },
@@ -507,21 +507,27 @@ local function get_picker_command(command, opts)
                 local entries = {}
                 for _, item in ipairs(qf_items) do
                     local filename = vim.api.nvim_buf_get_name(item.bufnr)
-                    local text = item.text or ""
+                    local text = item.text or ''
                     table.insert(entries, {
-                        display = string.format("%s:%d:%d: %s", vim.fn.fnamemodify(filename, ":~:."), item.lnum, item.col, text),
+                        display = string.format(
+                            '%s:%d:%d: %s',
+                            vim.fn.fnamemodify(filename, ':~:.'),
+                            item.lnum,
+                            item.col,
+                            text
+                        ),
                         filename = filename,
                         lnum = item.lnum,
-                        col = item.col
+                        col = item.col,
                     })
                 end
 
                 require('mini.pick').builtin.pick({
                     source = entries,
                     choose = function(entry)
-                        vim.cmd(string.format("edit +%d %s", entry.lnum, entry.filename))
-                        vim.api.nvim_win_set_cursor(0, {entry.lnum, entry.col - 1})
-                    end
+                        vim.cmd(string.format('edit +%d %s', entry.lnum, entry.filename))
+                        vim.api.nvim_win_set_cursor(0, { entry.lnum, entry.col - 1 })
+                    end,
                 })
             end,
         },
@@ -540,7 +546,7 @@ local function get_picker_command(command, opts)
                     command = 'ctags -R . && cat tags | grep -v "^!_"',
                     processor = function(_, _, lines)
                         return lines
-                    end
+                    end,
                 })
             end,
         },
@@ -560,11 +566,11 @@ local function get_picker_command(command, opts)
                 require('mini.pick').builtin.pick({
                     source = lines,
                     options = {
-                        prompt = "Buffer Lines: "
+                        prompt = 'Buffer Lines: ',
                     },
                     choose = function(entry, idx)
-                        vim.api.nvim_win_set_cursor(0, {idx, 0})
-                    end
+                        vim.api.nvim_win_set_cursor(0, { idx, 0 })
+                    end,
                 })
             end,
         },
@@ -580,7 +586,7 @@ local function get_picker_command(command, opts)
             end,
             mini = function()
                 -- Mini.pick doesn't have direct treesitter support
-                vim.notify("Treesitter picker not supported in mini.pick", vim.log.levels.WARN)
+                vim.notify('Treesitter picker not supported in mini.pick', vim.log.levels.WARN)
             end,
         },
         git_stash = {
@@ -605,7 +611,7 @@ local function get_picker_command(command, opts)
                         if stash_name then
                             vim.cmd('Git stash show -p ' .. stash_name)
                         end
-                    end
+                    end,
                 })
             end,
         },
@@ -630,7 +636,7 @@ local function get_picker_command(command, opts)
                     end,
                     choose = function(entry)
                         vim.cmd('Man ' .. entry)
-                    end
+                    end,
                 })
             end,
         },
