@@ -274,5 +274,24 @@ describe('pickme.main', function()
                 diag_spy:clear()
             end
         end)
+
+        it('get_commands returns all available commands', function()
+            local commands = main.get_commands()
+
+            -- Check for some core commands
+            assert.truthy(vim.tbl_contains(commands, 'files'))
+            assert.truthy(vim.tbl_contains(commands, 'live_grep'))
+            assert.truthy(vim.tbl_contains(commands, 'buffers'))
+            assert.truthy(vim.tbl_contains(commands, 'git_branches'))
+            assert.truthy(vim.tbl_contains(commands, 'diagnostics'))
+
+            -- Check for aliases
+            assert.truthy(vim.tbl_contains(commands, 'grep'))
+            assert.truthy(vim.tbl_contains(commands, 'find_files'))
+            assert.truthy(vim.tbl_contains(commands, 'help_tags'))
+
+            local expected_count = 43  -- 34 base commands + 9 aliases from command_aliases table
+            assert.are.equal(expected_count, #commands)
+        end)
     end)
 end)
