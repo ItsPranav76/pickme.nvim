@@ -32,15 +32,16 @@
 
 # pickme.nvim
 
-A unified interface for multiple Neovim picker plugins.
+A unified interface for multiple Neovim picker plugins (Telescope, FZF-Lua, and Snacks). Write your code once and let users choose their preferred picker backend!
 
 ## ✨ Features
 
-`pickme.nvim` provides a consistent API to work with different picker plugins in Neovim. It currently supports:
-
-- [Snacks.picker](https://github.com/folke/snacks.nvim/blob/main/docs/picker.md)
-- [Telescope](https://github.com/nvim-telescope/telescope.nvim)
-- [fzf-lua](https://github.com/ibhagwan/fzf-lua)
+- Auto-detects available picker providers based on your configuration
+- Seamlessly switch between Telescope, FZF-Lua, and Snacks.picker
+- 40+ common pickers that work across all providers
+- Nice collection of exclusive pickers for each provider
+- Custom picker API for creating your own powerful pickers
+- Sensible default keybindings
 
 ## ⚡ Setup
 
@@ -203,7 +204,10 @@ pickme.custom_picker({
 })
 ```
 
-You can find more example custom picker usage in [octohub.nvim/repos.lua](https://github.com/2kabhishek/octohub.nvim/blob/main/lua/octohub/repos.lua)
+Example Usages:
+
+- custom_picker in [octohub.nvim/repos.lua](https://github.com/2kabhishek/octohub.nvim/blob/main/lua/octohub/repos.lua)
+- select_file in [tdo.nvim/init.lua](https://github.com/2kabhishek/tdo.nvim/blob/main/lua/tdo/init.lua)
 
 ### Keybindings
 
@@ -293,7 +297,8 @@ Run `:help pickme.txt` for more details.
 
 ### 🌈 Inspiration
 
-I wanted an easy way to support different pickers in Neovim plugins, I wanted to create a unified interface for these pickers.
+I was tired of maintaining separate implementations for different picker plugins in my Neovim extensions.
+Now I can write the code once and let users pick their preferred UI!
 
 ### 💡 Challenges/Learnings
 
