@@ -51,6 +51,8 @@ Using [lazy.nvim](https://github.com/folke/lazy.nvim):
 ```lua
 {
   '2KAbhishek/pickme.nvim',
+  cmd = 'PickMe',
+  event = 'VeryLazy',
   dependencies = {
     -- Include at least one of these pickers:
     'folke/snacks.nvim', -- For snacks.picker
@@ -115,7 +117,7 @@ All these pickers are available through a unified interface regardless of the un
 - `keymaps` - Browse configured key mappings
 - `highlights` - Browse highlight groups
 - `colorschemes` - Preview and apply colorschemes
-- `man_pages` - Browse man pages
+- `man` - Browse man pages
 - `jumplist` - Navigate through jump history
 - `quickfix` - Browse quickfix list items
 - `treesitter` - Navigate treesitter symbols

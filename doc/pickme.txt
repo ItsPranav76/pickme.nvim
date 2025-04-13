@@ -110,7 +110,7 @@ NEOVIM FUNCTIONALITY ~
 - `keymaps` - Browse configured key mappings
 - `highlights` - Browse highlight groups
 - `colorschemes` - Preview and apply colorschemes
-- `man_pages` - Browse man pages
+- `man` - Browse man pages
 - `jumplist` - Navigate through jump history
 - `quickfix` - Browse quickfix list items
 - `treesitter` - Navigate treesitter symbols
@@ -134,11 +134,11 @@ LUA USAGE ~
 
 >lua
     local pickme = require('pickme')
-    
+
     -- Basic usage
     pickme.pick('files', { title = 'Find Files' })
     pickme.pick('live_grep', { title = 'Search Text' })
-    
+
     -- Using custom picker
     pickme.custom_picker({
       title = 'My Custom Picker',
@@ -163,7 +163,7 @@ Example key mappings:
 
 >lua
     local pickme = require('pickme')
-    
+
     vim.keymap.set('n', '<leader>ff', function() pickme.pick('files', { title = 'Find Files' }) end, { desc = 'Find Files' })
     vim.keymap.set('n', '<leader>fg', function() pickme.pick('live_grep', { title = 'Search Text' }) end, { desc = 'Live Grep' })
     vim.keymap.set('n', '<leader>fb', function() pickme.pick('buffers', { title = 'Buffers' }) end, { desc = 'Buffers' })

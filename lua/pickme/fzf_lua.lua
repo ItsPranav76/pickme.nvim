@@ -100,7 +100,7 @@ M.command_map = function()
         tags = 'tags',
         buffer_grep = 'lgrep_curbuf',
         treesitter = 'treesitter',
-        man_pages = 'man_pages',
+        man = 'man_pages',
     }
 end
 
