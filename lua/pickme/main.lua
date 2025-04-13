@@ -53,12 +53,11 @@ end
 M.get_commands = function()
     local commands = {}
     local seen = {}
-    local snacks_cmds = require('pickme.snacks').command_map()
-    local telescope_cmds = require('pickme.telescope').command_map()
-    local fzf_lua_cmds = require('pickme.fzf_lua').command_map()
+    local provider = config.config.picker_provider
+    local command_map = require('pickme.' .. provider).command_map()
     local command_aliases = config.config.command_aliases
 
-    for _, cmds in ipairs({ snacks_cmds, telescope_cmds, fzf_lua_cmds, command_aliases }) do
+    for _, cmds in ipairs({ command_map, command_aliases }) do
         for cmd, _ in pairs(cmds) do
             if not seen[cmd] then
                 seen[cmd] = true
