@@ -114,12 +114,6 @@ local function get_picker_command(command, opts)
             fzf_lua = function()
                 require('fzf-lua').commands(opts)
             end,
-            mini = function()
-                require('mini.pick').builtin.cli({
-                    command = 'nvim -c "silent verbose command" -c "silent qall!" | grep -v "Last set"',
-                    prefix = '',
-                })
-            end,
         },
         diagnostics = {
             snacks = function()
@@ -130,9 +124,6 @@ local function get_picker_command(command, opts)
             end,
             fzf_lua = function()
                 require('fzf-lua').diagnostics(opts)
-            end,
-            mini = function()
-                require('mini.pick').builtin.diagnostic(opts)
             end,
         },
         git_branches = {
@@ -145,9 +136,6 @@ local function get_picker_command(command, opts)
             fzf_lua = function()
                 require('fzf-lua').git_branches(opts)
             end,
-            mini = function()
-                require('mini.pick').builtin.git_branches(opts)
-            end,
         },
         git_status = {
             snacks = function()
@@ -158,9 +146,6 @@ local function get_picker_command(command, opts)
             end,
             fzf_lua = function()
                 require('fzf-lua').git_status(opts)
-            end,
-            mini = function()
-                require('mini.pick').builtin.git_status(opts)
             end,
         },
         git_commits = {
@@ -173,9 +158,6 @@ local function get_picker_command(command, opts)
             fzf_lua = function()
                 require('fzf-lua').git_commits(opts)
             end,
-            mini = function()
-                require('mini.pick').builtin.git_commits(opts)
-            end,
         },
         lsp_references = {
             snacks = function()
@@ -186,9 +168,6 @@ local function get_picker_command(command, opts)
             end,
             fzf_lua = function()
                 require('fzf-lua').lsp_references(opts)
-            end,
-            mini = function()
-                require('mini.pick').builtin.lsp({ scope = 'references' })
             end,
         },
         lsp_document_symbols = {
@@ -201,9 +180,6 @@ local function get_picker_command(command, opts)
             fzf_lua = function()
                 require('fzf-lua').lsp_document_symbols(opts)
             end,
-            mini = function()
-                require('mini.pick').builtin.lsp({ scope = 'document_symbol' })
-            end,
         },
         lsp_workspace_symbols = {
             snacks = function()
@@ -214,9 +190,6 @@ local function get_picker_command(command, opts)
             end,
             fzf_lua = function()
                 require('fzf-lua').lsp_workspace_symbols(opts)
-            end,
-            mini = function()
-                require('mini.pick').builtin.lsp({ scope = 'workspace_symbol' })
             end,
         },
         lsp_type_definitions = {
@@ -229,9 +202,6 @@ local function get_picker_command(command, opts)
             fzf_lua = function()
                 require('fzf-lua').lsp_typedefs(opts)
             end,
-            mini = function()
-                require('mini.pick').builtin.lsp({ scope = 'type_definition' })
-            end,
         },
         lsp_definitions = {
             snacks = function()
@@ -242,9 +212,6 @@ local function get_picker_command(command, opts)
             end,
             fzf_lua = function()
                 require('fzf-lua').lsp_definitions(opts)
-            end,
-            mini = function()
-                require('mini.pick').builtin.lsp({ scope = 'definition' })
             end,
         },
         lsp_implementations = {
@@ -257,9 +224,6 @@ local function get_picker_command(command, opts)
             fzf_lua = function()
                 require('fzf-lua').lsp_implementations(opts)
             end,
-            mini = function()
-                require('mini.pick').builtin.lsp({ scope = 'implementations' })
-            end,
         },
         keymaps = {
             snacks = function()
@@ -270,10 +234,6 @@ local function get_picker_command(command, opts)
             end,
             fzf_lua = function()
                 require('fzf-lua').keymaps(opts)
-            end,
-            mini = function()
-                local cmd = 'nvim -c "silent! verbose map" -c "silent! qall!" | grep -v "Last set"'
-                require('mini.pick').builtin.cli({ command = cmd, prefix = '' })
             end,
         },
         oldfiles = {
@@ -286,9 +246,6 @@ local function get_picker_command(command, opts)
             fzf_lua = function()
                 require('fzf-lua').oldfiles(opts)
             end,
-            mini = function()
-                require('mini.pick').builtin.oldfiles(opts)
-            end,
         },
         registers = {
             snacks = function()
@@ -299,9 +256,6 @@ local function get_picker_command(command, opts)
             end,
             fzf_lua = function()
                 require('fzf-lua').registers(opts)
-            end,
-            mini = function()
-                require('mini.pick').builtin.registers(opts)
             end,
         },
         marks = {
@@ -314,9 +268,6 @@ local function get_picker_command(command, opts)
             fzf_lua = function()
                 require('fzf-lua').marks(opts)
             end,
-            mini = function()
-                require('mini.pick').builtin.marks(opts)
-            end,
         },
         highlights = {
             snacks = function()
@@ -327,10 +278,6 @@ local function get_picker_command(command, opts)
             end,
             fzf_lua = function()
                 require('fzf-lua').highlights(opts)
-            end,
-            mini = function()
-                local cmd = 'nvim -c "silent! highlight" -c "silent! qall!"'
-                require('mini.pick').builtin.cli({ command = cmd, prefix = '' })
             end,
         },
         colorschemes = {
@@ -343,19 +290,6 @@ local function get_picker_command(command, opts)
             fzf_lua = function()
                 require('fzf-lua').colorschemes(opts)
             end,
-            mini = function()
-                require('mini.pick').builtin.cli({
-                    command = "nvim --cmd 'echo getcompletion(\"\", \"color\")' --cmd 'q!' | grep -v '^\\s*$'",
-                    processor = function(_, _, lines)
-                        return vim.tbl_map(function(line)
-                            return line:gsub('[%[%]\'" ,]', '')
-                        end, lines)
-                    end,
-                    preview = function(entry)
-                        return string.format('colorscheme %s', entry)
-                    end,
-                })
-            end,
         },
         command_history = {
             snacks = function()
@@ -366,17 +300,6 @@ local function get_picker_command(command, opts)
             end,
             fzf_lua = function()
                 require('fzf-lua').command_history(opts)
-            end,
-            mini = function()
-                require('mini.pick').builtin.pick({
-                    source = function()
-                        local history = {}
-                        for i = 1, vim.fn.histnr(':') do
-                            table.insert(history, vim.fn.histget(':', i))
-                        end
-                        return history
-                    end,
-                })
             end,
         },
         search_history = {
@@ -389,17 +312,6 @@ local function get_picker_command(command, opts)
             fzf_lua = function()
                 require('fzf-lua').search_history(opts)
             end,
-            mini = function()
-                require('mini.pick').builtin.pick({
-                    source = function()
-                        local history = {}
-                        for i = 1, vim.fn.histnr('/') do
-                            table.insert(history, vim.fn.histget('/', i))
-                        end
-                        return history
-                    end,
-                })
-            end,
         },
         spell_suggest = {
             snacks = function()
@@ -410,19 +322,6 @@ local function get_picker_command(command, opts)
             end,
             fzf_lua = function()
                 require('fzf-lua').spell_suggest(opts)
-            end,
-            mini = function()
-                local word = vim.fn.expand('<cword>')
-                local suggestions = vim.fn.spellsuggest(word)
-                require('mini.pick').builtin.pick({
-                    source = suggestions,
-                    options = {
-                        prompt = 'Spell Suggestions: ' .. word,
-                    },
-                    choose = function(entry)
-                        vim.cmd('normal ciw' .. entry)
-                    end,
-                })
             end,
         },
         resume = {
@@ -446,29 +345,6 @@ local function get_picker_command(command, opts)
             fzf_lua = function()
                 require('fzf-lua').jumps(opts)
             end,
-            mini = function()
-                local jump_items = vim.fn.getjumplist()[1]
-                local entries = {}
-                for i, item in ipairs(jump_items) do
-                    local bufname = vim.api.nvim_buf_get_name(item.bufnr)
-                    if bufname and bufname ~= '' then
-                        table.insert(entries, {
-                            display = string.format('%d: %s:%d', i, vim.fn.fnamemodify(bufname, ':~:.'), item.lnum),
-                            bufnr = item.bufnr,
-                            lnum = item.lnum,
-                            col = item.col,
-                        })
-                    end
-                end
-
-                require('mini.pick').builtin.pick({
-                    source = entries,
-                    choose = function(entry)
-                        vim.api.nvim_set_current_buf(entry.bufnr)
-                        vim.api.nvim_win_set_cursor(0, { entry.lnum, entry.col })
-                    end,
-                })
-            end,
         },
         quickfix = {
             snacks = function()
@@ -480,34 +356,6 @@ local function get_picker_command(command, opts)
             fzf_lua = function()
                 require('fzf-lua').quickfix(opts)
             end,
-            mini = function()
-                local qf_items = vim.fn.getqflist()
-                local entries = {}
-                for _, item in ipairs(qf_items) do
-                    local filename = vim.api.nvim_buf_get_name(item.bufnr)
-                    local text = item.text or ''
-                    table.insert(entries, {
-                        display = string.format(
-                            '%s:%d:%d: %s',
-                            vim.fn.fnamemodify(filename, ':~:.'),
-                            item.lnum,
-                            item.col,
-                            text
-                        ),
-                        filename = filename,
-                        lnum = item.lnum,
-                        col = item.col,
-                    })
-                end
-
-                require('mini.pick').builtin.pick({
-                    source = entries,
-                    choose = function(entry)
-                        vim.cmd(string.format('edit +%d %s', entry.lnum, entry.filename))
-                        vim.api.nvim_win_set_cursor(0, { entry.lnum, entry.col - 1 })
-                    end,
-                })
-            end,
         },
         tags = {
             telescope = function()
@@ -516,16 +364,8 @@ local function get_picker_command(command, opts)
             fzf_lua = function()
                 require('fzf-lua').tags(opts)
             end,
-            mini = function()
-                require('mini.pick').builtin.cli({
-                    command = 'ctags -R . && cat tags | grep -v "^!_"',
-                    processor = function(_, _, lines)
-                        return lines
-                    end,
-                })
-            end,
         },
-        current_buffer_fuzzy_find = {
+        buffer_grep = {
             snacks = function()
                 require('snacks.picker').lines(opts)
             end,
@@ -534,18 +374,6 @@ local function get_picker_command(command, opts)
             end,
             fzf_lua = function()
                 require('fzf-lua').lgrep_curbuf(opts)
-            end,
-            mini = function()
-                local lines = vim.api.nvim_buf_get_lines(0, 0, -1, false)
-                require('mini.pick').builtin.pick({
-                    source = lines,
-                    options = {
-                        prompt = 'Buffer Lines: ',
-                    },
-                    choose = function(entry, idx)
-                        vim.api.nvim_win_set_cursor(0, { idx, 0 })
-                    end,
-                })
             end,
         },
         treesitter = {
@@ -569,20 +397,6 @@ local function get_picker_command(command, opts)
             fzf_lua = function()
                 require('fzf-lua').git_stash(opts)
             end,
-            mini = function()
-                require('mini.pick').builtin.cli({
-                    command = 'git stash list',
-                    processor = function(_, _, lines)
-                        return lines
-                    end,
-                    choose = function(entry)
-                        local stash_name = entry:match('stash@{%d+}')
-                        if stash_name then
-                            vim.cmd('Git stash show -p ' .. stash_name)
-                        end
-                    end,
-                })
-            end,
         },
         man_pages = {
             snacks = function()
@@ -593,19 +407,6 @@ local function get_picker_command(command, opts)
             end,
             fzf_lua = function()
                 require('fzf-lua').man_pages(opts)
-            end,
-            mini = function()
-                require('mini.pick').builtin.cli({
-                    command = 'man -k . | sort',
-                    processor = function(_, _, lines)
-                        return vim.tbl_map(function(line)
-                            return line:match('([^%s]+)')
-                        end, lines)
-                    end,
-                    choose = function(entry)
-                        vim.cmd('Man ' .. entry)
-                    end,
-                })
             end,
         },
         select_file = {
@@ -774,15 +575,15 @@ local function get_picker_command(command, opts)
 end
 
 local command_aliases = {
+    buffer_lines = 'buffer_grep',
+    colorscheme = 'colorschemes',
     find_files = 'files',
+    git_log = 'git_commits',
     grep = 'live_grep',
     grep_word = 'grep_string',
-    buffer_lines = 'current_buffer_fuzzy_find',
-    git_log = 'git_commits',
     help_tags = 'help',
     jumps = 'jumplist',
     qflist = 'quickfix',
-    colorscheme = 'colorschemes',
 }
 
 M.pick = function(command, opts)
@@ -802,11 +603,11 @@ end
 
 M.get_commands = function()
     local commands = {
+        'buffer_grep',
         'buffers',
         'colorschemes',
         'command_history',
         'commands',
-        'current_buffer_fuzzy_find',
         'diagnostics',
         'files',
         'git_branches',
