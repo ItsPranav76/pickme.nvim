@@ -148,13 +148,15 @@ describe('pickme.main', function()
                     spy_obj:revert()
                 end
 
-                assert.is_true(
-                    supported_count == cmd_map_size,
+                assert.are.equal(
+                    supported_count,
+                    cmd_map_size + alias_size,
                     'Provider ' .. provider.name .. ' should support all commands in mock'
                 )
 
-                assert.is_true(
-                    called_count == cmd_map_size + alias_size,
+                assert.are.equal(
+                    called_count,
+                    cmd_map_size,
                     'Provider ' .. provider.name .. ' should have all functions called'
                 )
             end
