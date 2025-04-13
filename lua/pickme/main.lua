@@ -778,14 +778,26 @@ local function get_picker_command(command, opts)
         },
     }
 
+    if not picker_commands[command] then
+        error("Picker command '" .. command .. "' not found. Check documentation for available commands.")
+        return nil
+    end
+
+    if not picker_commands[command][picker_provider] then
+        error("Picker provider '" .. picker_provider .. "' does not support the '" .. command .. "' command.")
+        return nil
+    end
+
     return picker_commands[command][picker_provider]
 end
 
 M.pick = function(command, opts)
     opts = opts or {}
     vim.schedule(function()
-        local picker_cmd = get_picker_command(command, opts)
-        picker_cmd()
+        local ok, picker_cmd = pcall(get_picker_command, command, opts)
+        if ok and picker_cmd then
+            picker_cmd()
+        end
     end)
 end
 
