@@ -5,10 +5,14 @@ local M = {}
 ---@field picker_provider string snacks (default) | telescope | fzf_lua
 ---@field detect_provider boolean auto-detect the picker provider (default: true)
 ---@field add_default_keybindings boolean add default keybindings (default: false)
+---@field command_aliases table<string, string> a map of command aliases to their actual commands
 local config = {
     picker_provider = 'snacks',
     detect_provider = true,
     add_default_keybindings = false,
+    command_aliases = {
+        git_log = 'git_commits',
+    },
 }
 
 ---@type PickMe.Config.config

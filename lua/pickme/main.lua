@@ -22,18 +22,6 @@ local M = {}
 ---@field selection_handler fun(bufnr:number|nil, selection:table) -- Handler for selection
 ---@field provider_override? string -- Picker provider to use
 
-local command_aliases = {
-    buffer_lines = 'buffer_grep',
-    colorscheme = 'colorschemes',
-    find_files = 'files',
-    git_log = 'git_commits',
-    grep = 'live_grep',
-    grep_word = 'grep_string',
-    help_tags = 'help',
-    jumps = 'jumplist',
-    qflist = 'quickfix',
-}
-
 local picker_provider_map = {
     snacks = 'snacks.picker',
     telescope = 'telescope.builtin',
@@ -111,6 +99,7 @@ end
 M.pick = function(command, opts)
     opts = opts or {}
     local provider = opts.provider_override or config.config.picker_provider
+    local command_aliases = config.config.command_aliases
     if command_aliases[command] then
         command = command_aliases[command]
     end
